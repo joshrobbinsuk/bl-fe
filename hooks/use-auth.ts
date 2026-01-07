@@ -52,9 +52,7 @@ export function useAuth() {
   };
 
   const handleSignOut = async () => {
-    console.log("1");
     await signOut();
-    console.log("2");
     setUser(null);
   };
 

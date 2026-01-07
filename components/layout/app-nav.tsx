@@ -17,6 +17,7 @@ export function AppNav() {
   const handleSignOut = async () => {
     await signOut();
     router.push("/login");
+
     router.refresh();
   };
 
@@ -55,7 +56,7 @@ export function AppNav() {
             </div>
           </div>
 
-          <Button variant="ghost" size="sm" onClick={() => signOut()}>
+          <Button variant="ghost" size="sm" onClick={() => handleSignOut()}>
             <LogOut className="h-4 w-4 mr-2" />
             Logout
           </Button>

@@ -1,33 +1,34 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useGetFixturesQuery } from "@/lib/services/betting-api"
-import { FixtureCard } from "@/components/fixtures/fixture-card"
-import { AppNav } from "@/components/layout/app-nav"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search } from "lucide-react"
+import { useState } from "react";
+import { useGetFixturesQuery } from "@/lib/services/betting-api";
+import { FixtureCard } from "@/components/fixtures/fixture-card";
+import { AppNav } from "@/components/layout/app-nav";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search } from "lucide-react";
 
 export default function FixturesPage() {
-  const [league, setLeague] = useState<string>("")
-  const [searchTerm, setSearchTerm] = useState("")
-  const { data, isLoading, error } = useGetFixturesQuery({ league: league || undefined })
-
-  console.log("[v0] Fixtures page - data:", data)
-  console.log("[v0] Fixtures page - isLoading:", isLoading)
-  console.log("[v0] Fixtures page - error:", error)
-
+  const [league, setLeague] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const { data, isLoading, error } = useGetFixturesQuery({
+    league: league || undefined,
+  });
   const filteredFixtures = data?.fixtures.filter((fixture) => {
-    if (!searchTerm) return true
-    const search = searchTerm.toLowerCase()
+    if (!searchTerm) return true;
+    const search = searchTerm.toLowerCase();
     return (
       fixture.home_team.toLowerCase().includes(search) ||
       fixture.away_team.toLowerCase().includes(search) ||
       fixture.venue.toLowerCase().includes(search)
-    )
-  })
-
-  console.log("[v0] Filtered fixtures count:", filteredFixtures?.length)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-accent/10">
@@ -36,8 +37,12 @@ export default function FixturesPage() {
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Upcoming Fixtures</h1>
-            <p className="text-muted-foreground">Place your bets on upcoming matches</p>
+            <h1 className="text-3xl font-bold tracking-tight mb-2">
+              Upcoming Fixtures
+            </h1>
+            <p className="text-muted-foreground">
+              Place your bets on upcoming matches
+            </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
@@ -73,7 +78,9 @@ export default function FixturesPage() {
 
           {error && (
             <div className="text-center py-12">
-              <p className="text-destructive">Failed to load fixtures. Please try again.</p>
+              <p className="text-destructive">
+                Failed to load fixtures. Please try again.
+              </p>
             </div>
           )}
 
@@ -91,5 +98,5 @@ export default function FixturesPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

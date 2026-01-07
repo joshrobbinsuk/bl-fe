@@ -105,7 +105,6 @@ const mockBaseQuery: typeof baseQuery = async (args, api, extraOptions) => {
   const endpoint = typeof args === "string" ? args : args.url;
 
   if (endpoint?.includes("/client/fixture")) {
-    console.log("[v0] Returning mock fixtures:", mockFixtures.length);
     return { data: { fixtures: mockFixtures } };
   }
 
@@ -152,11 +151,9 @@ const mockBaseQuery: typeof baseQuery = async (args, api, extraOptions) => {
   }
 
   if (endpoint?.includes("/client/bet")) {
-    console.log("[v0] Returning mock bets:", mockBets.length);
     return { data: { bets: mockBets } };
   }
 
-  console.log("[v0] No mock handler found for endpoint");
   return { error: { status: 404, data: { message: "Not found" } } };
 };
 

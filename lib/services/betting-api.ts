@@ -98,65 +98,6 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-const mockBaseQuery: typeof baseQuery = async (args, api, extraOptions) => {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  const endpoint = typeof args === "string" ? args : args.url;
-
-  if (endpoint?.includes("/client/fixture")) {
-    return { data: { fixtures: mockFixtures } };
-  }
-
-  if (
-    endpoint?.includes("/client/bet") &&
-    typeof args !== "string" &&
-    args.method === "POST"
-  ) {
-    const body = args.body as CreateBetRequest;
-    const fixture = mockFixtures.find((f) => f.id === body.fixture_id);
-
-    if (!fixture) {
-      return { error: { status: 404, data: { message: "Fixture not found" } } };
-    }
-
-    const odds =
-      body.choice === "HOME"
-        ? fixture.home_odds
-        : body.choice === "AWAY"
-        ? fixture.away_odds
-        : fixture.draw_odds;
-
-    const newBet: Bet = {
-      id: `bet-${Date.now()}`,
-      fixture_id: body.fixture_id,
-      user_id: "user-123",
-      choice: body.choice,
-      stake: body.stake.toFixed(2),
-      returns: (body.stake * Number.parseFloat(odds || "1")).toFixed(2),
-      outcome: "UNDECIDED",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      fixture,
-    };
-
-    mockBets.unshift(newBet);
-
-    return {
-      data: {
-        bet: newBet,
-        message: "Bet placed successfully",
-      },
-    };
-  }
-
-  if (endpoint?.includes("/client/bet")) {
-    return { data: { bets: mockBets } };
-  }
-
-  return { error: { status: 404, data: { message: "Not found" } } };
-};
-
 export const bettingApi = createApi({
   reducerPath: "bettingApi",
   baseQuery: baseQuery,

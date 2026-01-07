@@ -35,7 +35,7 @@ export interface Fixture {
   home_team_logo: string;
   away_team: string;
   away_team_logo: string;
-  home_odds: string | null; // Decimal as string
+  home_odds: string | null;
   away_odds: string | null;
   draw_odds: string | null;
   home_goals: number | null;
@@ -48,10 +48,13 @@ export interface Bet {
   id: string;
   fixture_id: string;
   user_id: string;
+  home_team: string;
+  away_team: string;
   choice: FixtureResult;
-  stake: string; // Decimal as string
-  returns: string; // Decimal as string
+  stake: string;
+  returns: string;
   outcome: BetOutcome;
+  kick_off: string;
   created_at: string;
   updated_at: string;
   fixture?: Fixture;

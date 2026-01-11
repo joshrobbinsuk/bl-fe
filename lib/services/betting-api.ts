@@ -120,13 +120,12 @@ export const bettingApi = createApi({
 
     getUserBets: builder.query<
       BetsResponse,
-      { outcome?: string; search?: string; limit?: number }
+      { outcome?: string; search?: string }
     >({
       query: (params) => {
         const searchParams = new URLSearchParams();
         if (params.outcome) searchParams.append("outcome", params.outcome);
         if (params.search) searchParams.append("search", params.search);
-        if (params.limit) searchParams.append("limit", params.limit.toString());
 
         return `/client/bet${
           searchParams.toString() ? `?${searchParams.toString()}` : ""

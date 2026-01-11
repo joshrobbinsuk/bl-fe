@@ -47,7 +47,7 @@ export function BetDialog({ fixture, open, onOpenChange }: BetDialogProps) {
     if (!oddsStr) return "0.00";
 
     const odds = Number.parseFloat(oddsStr);
-    eturn(Number(stakeNum) + Number(stakeNum * odds)).toFixed(2);
+    return (Number(stakeNum) + Number(stakeNum * odds)).toFixed(2);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

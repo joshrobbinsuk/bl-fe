@@ -104,8 +104,12 @@ const baseQuery = fetchBaseQuery({
 export const bettingApi = createApi({
   reducerPath: "bettingApi",
   baseQuery: baseQuery,
-  tagTypes: ["Fixtures", "Bets"],
+  tagTypes: ["Fixtures", "Bets", "User"],
   endpoints: (builder) => ({
+    getMe: builder.query<User, void>({
+      query: () => "/client/me",
+      providesTags: ["User"],
+    }),
     getFixtures: builder.query<FixturesResponse, { search?: string }>({
       query: (params) => {
         const searchParams = new URLSearchParams();
@@ -140,12 +144,13 @@ export const bettingApi = createApi({
         method: "POST",
         body: bet,
       }),
-      invalidatesTags: ["Bets"],
+      invalidatesTags: ["Bets", "User"],
     }),
   }),
 });
 
 export const {
+  useGetMeQuery,
   useGetFixturesQuery,
   useGetUserBetsQuery,
   useCreateBetMutation,

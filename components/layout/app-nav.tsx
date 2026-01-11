@@ -6,6 +6,7 @@ import { Trophy, ListChecks, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
+import { useGetMeQuery } from "@/lib/services/betting-api";
 
 import { cn } from "@/lib/utils";
 
@@ -13,6 +14,17 @@ export function AppNav() {
   const pathname = usePathname();
   const { signOut } = useAuth();
   const router = useRouter();
+  const { data: me, isLoading: isUserLoading } = useGetMeQuery();
+
+  const balanceNumber =
+    me?.balance !== undefined ? Number.parseFloat(me.balance) : null;
+  const balanceLabel =
+    balanceNumber !== null && !Number.isNaN(balanceNumber)
+      ? new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(balanceNumber)
+      : "Balance --";
 
   const handleSignOut = async () => {
     await signOut();
@@ -56,10 +68,18 @@ export function AppNav() {
             </div>
           </div>
 
-          <Button variant="ghost" size="sm" onClick={() => handleSignOut()}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 rounded-full border bg-muted/40 px-2.5 py-1 text-xs font-medium text-foreground sm:px-3 sm:text-sm">
+              <span className="text-muted-foreground">Balance</span>
+              <span className={isUserLoading ? "text-muted-foreground" : ""}>
+                {isUserLoading ? "Loading..." : balanceLabel}
+              </span>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => handleSignOut()}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
       </div>
 

@@ -16,8 +16,8 @@ export default function MyBetsPage() {
     filter === "all"
       ? undefined
       : filter === "pending"
-        ? "UNDECIDED"
-        : filter.toUpperCase();
+      ? "UNDECIDED"
+      : filter.toUpperCase();
   const { data, isLoading, error } = useGetUserBetsQuery({
     outcome,
     search: debouncedSearch || undefined,

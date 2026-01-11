@@ -106,14 +106,10 @@ export const bettingApi = createApi({
   baseQuery: baseQuery,
   tagTypes: ["Fixtures", "Bets"],
   endpoints: (builder) => ({
-    getFixtures: builder.query<
-      FixturesResponse,
-      { league?: string; date?: string }
-    >({
+    getFixtures: builder.query<FixturesResponse, { search?: string }>({
       query: (params) => {
         const searchParams = new URLSearchParams();
-        if (params.league) searchParams.append("league", params.league);
-        if (params.date) searchParams.append("date", params.date);
+        if (params.search) searchParams.append("search", params.search);
 
         return `/client/fixture${
           searchParams.toString() ? `?${searchParams.toString()}` : ""
@@ -124,11 +120,12 @@ export const bettingApi = createApi({
 
     getUserBets: builder.query<
       BetsResponse,
-      { status?: string; limit?: number }
+      { outcome?: string; search?: string; limit?: number }
     >({
       query: (params) => {
         const searchParams = new URLSearchParams();
-        if (params.status) searchParams.append("status", params.status);
+        if (params.outcome) searchParams.append("outcome", params.outcome);
+        if (params.search) searchParams.append("search", params.search);
         if (params.limit) searchParams.append("limit", params.limit.toString());
 
         return `/client/bet${

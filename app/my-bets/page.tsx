@@ -5,15 +5,22 @@ import { useGetUserBetsQuery } from "@/lib/services/betting-api";
 import { BetCard } from "@/components/bets/bet-card";
 import { AppNav } from "@/components/layout/app-nav";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SearchInput } from "@/components/ui/search-input";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 
 export default function MyBetsPage() {
   const [filter, setFilter] = useState<string>("all");
-  const { data, isLoading, error } = useGetUserBetsQuery({});
-
-  const filteredBets = data?.bets.filter((bet) => {
-    if (filter === "all") return true;
-    if (filter === "pending") return bet.outcome === "UNDECIDED";
-    return bet.outcome === filter.toUpperCase();
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebouncedValue(searchTerm.trim(), 300);
+  const outcome =
+    filter === "all"
+      ? undefined
+      : filter === "pending"
+        ? "UNDECIDED"
+        : filter.toUpperCase();
+  const { data, isLoading, error } = useGetUserBetsQuery({
+    outcome,
+    search: debouncedSearch || undefined,
   });
 
   return (
@@ -29,14 +36,22 @@ export default function MyBetsPage() {
             </p>
           </div>
 
-          <Tabs value={filter} onValueChange={setFilter} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
-              <TabsTrigger value="won">Won</TabsTrigger>
-              <TabsTrigger value="lost">Lost</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="flex flex-col gap-3">
+            <SearchInput
+              className="w-full sm:w-64"
+              placeholder="Search teams or venues..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Tabs value={filter} onValueChange={setFilter} className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="pending">Pending</TabsTrigger>
+                <TabsTrigger value="won">Won</TabsTrigger>
+                <TabsTrigger value="lost">Lost</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
 
           {isLoading && (
             <div className="text-center py-12">
@@ -53,14 +68,14 @@ export default function MyBetsPage() {
             </div>
           )}
 
-          {filteredBets && filteredBets.length === 0 && (
+          {data?.bets && data.bets.length === 0 && (
             <div className="text-center py-12">
               <p className="text-muted-foreground">No bets found</p>
             </div>
           )}
 
           <div className="space-y-3">
-            {filteredBets?.map((bet) => (
+            {data?.bets?.map((bet) => (
               <BetCard key={bet.id} bet={bet} />
             ))}
           </div>

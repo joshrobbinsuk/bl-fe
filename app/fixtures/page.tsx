@@ -4,30 +4,14 @@ import { useState } from "react";
 import { useGetFixturesQuery } from "@/lib/services/betting-api";
 import { FixtureCard } from "@/components/fixtures/fixture-card";
 import { AppNav } from "@/components/layout/app-nav";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Search } from "lucide-react";
+import { SearchInput } from "@/components/ui/search-input";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 
 export default function FixturesPage() {
-  const [league, setLeague] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebouncedValue(searchTerm.trim(), 300);
   const { data, isLoading, error } = useGetFixturesQuery({
-    league: league || undefined,
-  });
-  const filteredFixtures = data?.fixtures.filter((fixture) => {
-    if (!searchTerm) return true;
-    const search = searchTerm.toLowerCase();
-    return (
-      fixture.home_team.toLowerCase().includes(search) ||
-      fixture.away_team.toLowerCase().includes(search) ||
-      fixture.venue.toLowerCase().includes(search)
-    );
+    search: debouncedSearch || undefined,
   });
 
   return (
@@ -46,27 +30,12 @@ export default function FixturesPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search teams or venues..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <Select value={league} onValueChange={setLeague}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="All Leagues" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Leagues</SelectItem>
-                <SelectItem value="premier-league">Premier League</SelectItem>
-                <SelectItem value="la-liga">La Liga</SelectItem>
-                <SelectItem value="bundesliga">Bundesliga</SelectItem>
-                <SelectItem value="serie-a">Serie A</SelectItem>
-              </SelectContent>
-            </Select>
+            <SearchInput
+              className="flex-1"
+              placeholder="Search teams or venues..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
           {isLoading && (
@@ -84,14 +53,14 @@ export default function FixturesPage() {
             </div>
           )}
 
-          {filteredFixtures && filteredFixtures.length === 0 && (
+          {data?.fixtures && data.fixtures.length === 0 && (
             <div className="text-center py-12">
               <p className="text-muted-foreground">No fixtures found</p>
             </div>
           )}
 
           <div className="grid gap-4 md:grid-cols-2">
-            {filteredFixtures?.map((fixture) => (
+            {data?.fixtures?.map((fixture) => (
               <FixtureCard key={fixture.id} fixture={fixture} />
             ))}
           </div>

@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import type { Bet } from "@/lib/services/betting-api";
 
 interface BetCardProps {
@@ -11,16 +12,16 @@ interface BetCardProps {
 export function BetCard({ bet }: BetCardProps) {
   const kickOff = new Date(bet.kick_off);
 
-  const getStatusColor = (outcome: string) => {
+  const getStatusClassName = (outcome: string) => {
     switch (outcome) {
       case "WON":
-        return "bg-green-500/10 text-green-600 border-green-500/20";
+        return "border-success-border bg-success-soft text-success";
       case "LOST":
-        return "bg-red-500/10 text-red-600 border-red-500/20";
+        return "border-destructive/20 bg-destructive/10 text-destructive";
       case "VOIDED":
-        return "bg-gray-500/10 text-gray-600 border-gray-500/20";
+        return "border-neutral-border bg-neutral-soft text-neutral";
       default:
-        return "bg-yellow-500/10 text-yellow-600 border-yellow-500/20";
+        return "border-warning-border bg-warning-soft text-warning";
     }
   };
 
@@ -41,7 +42,12 @@ export function BetCard({ bet }: BetCardProps) {
                 })}
               </div>
             </div>
-            <Badge className={getStatusColor(bet.outcome)}>{bet.outcome}</Badge>
+            <Badge
+              variant="outline"
+              className={cn("min-w-20 justify-center font-semibold", getStatusClassName(bet.outcome))}
+            >
+              {bet.outcome}
+            </Badge>
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t text-sm">

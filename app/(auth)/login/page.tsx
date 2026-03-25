@@ -9,7 +9,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-4">
         <div className="text-center space-y-2 mb-8">
           <h1 className="text-4xl font-bold tracking-tight">BrokeLads</h1>
-          <p className="text-muted-foreground">Your trusted betting platform</p>
+          <p className="text-muted-foreground">A betting app by Josh Robbins</p>
         </div>
 
         <LoginForm />

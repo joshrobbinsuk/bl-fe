@@ -25,7 +25,8 @@ State: RTK Query cache only — no Redux feature slices, no Context/Zustand. Aut
 ```bash
 npm ci               # install (Node 25 locally; CI uses package.json's node version)
 npm run dev          # dev server on http://localhost:3000
-npm run typecheck    # tsc --noEmit — the ONLY CI gate (.github/workflows/typecheck.yml, PR→main). Currently clean.
+npm run lint         # eslint 9 (flat config, eslint-config-next) — CI gate, clean
+npm run typecheck    # tsc --noEmit — CI gate, clean
 npm run build        # next build
 ```
 
@@ -33,7 +34,7 @@ npm run build        # next build
 
 - Path alias `@/*` → repo root (`tsconfig.json`). Import as `@/components/...`, `@/lib/...`.
 - `next.config.mjs` sets `typescript.ignoreBuildErrors: true` — **builds won't fail on type errors**. Always run `npm run typecheck` yourself before considering a change done; the build won't catch it. `images.unoptimized: true` too.
-- `npm run lint` is **broken** — eslint isn't installed and there's no config. Don't rely on it; don't claim a change "passes lint". (Wiring up eslint is a reasonable improvement if asked.)
+- `npm run lint` works (eslint 9 flat config in `eslint.config.mjs`, extending `eslint-config-next`) and gates CI alongside typecheck. Note `eslint-config-next` 16 ships a native flat config — spread its default export; do **not** wrap it in `FlatCompat` (circular-JSON crash). react-hooks v7 rules are strict (React Compiler); `useAuth`'s mount-time fetch carries one inline `eslint-disable` with a reason — prefer fixing at the source over muting the rule.
 - No test framework at all (no Jest/Vitest/Playwright). Verify changes by running the app.
 - Tailwind v4 (CSS-first config in `app/globals.css`, OKLch theme vars). No `tailwind.config.js`.
 - shadcn components in `components/ui/` are generated — extend via `components.json` / the CLI rather than hand-editing where possible.

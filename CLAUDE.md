@@ -53,6 +53,8 @@ NEXT_PUBLIC_AMPLIFY_REGION=eu-west-2
 
 The Cognito pool/client must match the backend's (`COGNITO_CLIENT_ID` / `USER_POOL_ID`) or token verification fails.
 
+The "Ask the Pundit" drawer (`/fixtures`) streams from `POST /client/pundit` via a manual `fetch` reusing `NEXT_PUBLIC_API_URL` and the Cognito idToken — **no new Vercel env needed**. The backend needs `OPENAI_API_KEY` set for live replies.
+
 ## Branches
 
 Default branch `main`. Feature branches: `feature/<slug>`. Deploy is not codified in this repo (no deploy workflow) — almost certainly Vercel via git integration (`@vercel/analytics` is wired in). Confirm before assuming.

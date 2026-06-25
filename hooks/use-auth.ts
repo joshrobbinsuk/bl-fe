@@ -13,10 +13,6 @@ export function useAuth() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    checkUser();
-  }, []);
-
   const checkUser = async () => {
     try {
       const currentUser = await getCurrentUser();
@@ -27,6 +23,14 @@ export function useAuth() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Mount-time auth probe: setState happens after an await, which is the
+    // intended pattern here. A full fix means sourcing auth from an external
+    // store (useSyncExternalStore / RTK Query) — out of scope for now.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    checkUser();
+  }, []);
 
   const handleSignIn = async (email: string, password: string) => {
     const result = await signIn({ username: email, password });

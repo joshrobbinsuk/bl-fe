@@ -5,6 +5,7 @@ import { useGetFixturesQuery } from "@/lib/services/betting-api";
 import { FixtureCard } from "@/components/fixtures/fixture-card";
 import { AppNav } from "@/components/layout/app-nav";
 import { SearchInput } from "@/components/ui/search-input";
+import { PunditDrawer } from "@/components/pundit/pundit-drawer";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 
 export default function FixturesPage() {
@@ -14,19 +15,24 @@ export default function FixturesPage() {
     search: debouncedSearch || undefined,
   });
 
+  const fixtureIds = data?.fixtures?.map((f) => f.id) ?? [];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-accent/10">
       <AppNav />
 
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight mb-2">
-              Upcoming Fixtures
-            </h1>
-            <p className="text-muted-foreground">
-              Place your bets on upcoming matches
-            </p>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight mb-2">
+                Upcoming Fixtures
+              </h1>
+              <p className="text-muted-foreground">
+                Place your bets on upcoming matches
+              </p>
+            </div>
+            <PunditDrawer fixtureIds={fixtureIds} />
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">

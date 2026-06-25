@@ -96,8 +96,9 @@ export function PunditDrawer({ fixtureIds }: PunditDrawerProps) {
         >
           {messages.length === 0 && !streaming && (
             <p className="text-muted-foreground text-sm">
-              Ask about today&apos;s slate — form, value, who to watch. No
-              certainties, just opinions.
+              Ask about today&apos;s slate — form, value, who to watch. I can also
+              pull the latest news on a single fixture if you ask. No certainties,
+              just opinions.
             </p>
           )}
 

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -22,9 +23,25 @@ export function FixtureCard({ fixture }: FixtureCardProps) {
       <Card className="hover:shadow-lg transition-shadow">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <Badge variant="secondary" className="text-xs">
-              {fixture.venue}
-            </Badge>
+            {fixture.league ? (
+              <Badge variant="secondary" className="text-xs flex items-center gap-1.5">
+                {fixture.league.logo && (
+                  <Image
+                    src={fixture.league.logo}
+                    alt=""
+                    width={16}
+                    height={16}
+                    className="h-4 w-4 object-contain"
+                    unoptimized
+                  />
+                )}
+                {fixture.league.display_name}
+              </Badge>
+            ) : (
+              <Badge variant="secondary" className="text-xs">
+                {fixture.venue}
+              </Badge>
+            )}
             <span className="text-xs text-muted-foreground">
               {kickOff.toLocaleDateString()} {kickOff.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
             </span>

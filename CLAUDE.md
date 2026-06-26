@@ -14,7 +14,9 @@ Next.js 16 (App Router) + React 19 + TypeScript frontend for the BrokeLads sport
 ## Data layer
 
 All backend access goes through the single RTK Query slice in `lib/services/betting-api.ts`. Add new endpoints there, not ad-hoc `fetch`. It maps 1:1 to the backend:
-- `getMe` → `GET /client/me`, `getFixtures` → `GET /client/fixture?search=`, `getUserBets` → `GET /client/bet?outcome=&search=`, `createBet` → `POST /client/bet`.
+- `getMe` → `GET /client/me`, `getFixtures` → `GET /client/fixture?search=&league_id=`, `getLeagues` → `GET /client/league` (active leagues only), `getUserBets` → `GET /client/bet?outcome=&search=`, `createBet` → `POST /client/bet`.
+
+Each `Fixture` carries a nested `league: { id, display_name, logo } | null` (`league.id` is the BE UUID PK, not the rapid_api_id). The fixtures page filters by `league_id` via the `<LeagueFilter>` pills (`components/fixtures/league-filter.tsx`); `FixtureCard` shows the league logo + name badge, falling back to `venue` when `league` is null.
 
 `prepareHeaders` attaches `Authorization: Bearer <idToken>` from Amplify's `fetchAuthSession()`. Money fields (balance/stake/returns) are **strings** end-to-end — backend sends `Decimal` as string; don't coerce to `number` for display/math without care.
 

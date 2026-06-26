@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useGetFixturesQuery } from "@/lib/services/betting-api";
 import { FixtureCard } from "@/components/fixtures/fixture-card";
+import { LeagueFilter } from "@/components/fixtures/league-filter";
 import { AppNav } from "@/components/layout/app-nav";
 import { SearchInput } from "@/components/ui/search-input";
 import { PunditDrawer } from "@/components/pundit/pundit-drawer";
@@ -10,9 +11,13 @@ import { useDebouncedValue } from "@/hooks/use-debounced-value";
 
 export default function FixturesPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedLeagueId, setSelectedLeagueId] = useState<string | undefined>(
+    undefined,
+  );
   const debouncedSearch = useDebouncedValue(searchTerm.trim(), 300);
   const { data, isLoading, error } = useGetFixturesQuery({
     search: debouncedSearch || undefined,
+    league_id: selectedLeagueId,
   });
 
   const fixtureIds = data?.fixtures?.map((f) => f.id) ?? [];
@@ -43,6 +48,11 @@ export default function FixturesPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+
+          <LeagueFilter
+            value={selectedLeagueId}
+            onChange={setSelectedLeagueId}
+          />
 
           {isLoading && (
             <div className="text-center py-12">

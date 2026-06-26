@@ -17,12 +17,8 @@ export interface User {
 
 export interface League {
   id: string;
-  rapid_api_id: number;
-  name: string;
   display_name: string;
-  active: boolean;
-  created_at: string;
-  updated_at: string;
+  logo: string;
 }
 
 export interface Fixture {
@@ -42,6 +38,7 @@ export interface Fixture {
   away_goals: number | null;
   created_at: string;
   updated_at: string;
+  league: League | null;
 }
 
 export interface Bet {
@@ -68,6 +65,10 @@ export interface CreateBetRequest {
 
 export interface FixturesResponse {
   fixtures: Fixture[];
+}
+
+export interface LeaguesResponse {
+  leagues: League[];
 }
 
 export interface BetsResponse {
@@ -104,22 +105,32 @@ const baseQuery = fetchBaseQuery({
 export const bettingApi = createApi({
   reducerPath: "bettingApi",
   baseQuery: baseQuery,
-  tagTypes: ["Fixtures", "Bets", "User"],
+  tagTypes: ["Fixtures", "Bets", "User", "Leagues"],
   endpoints: (builder) => ({
     getMe: builder.query<User, void>({
       query: () => "/client/me",
       providesTags: ["User"],
     }),
-    getFixtures: builder.query<FixturesResponse, { search?: string }>({
+    getFixtures: builder.query<
+      FixturesResponse,
+      { search?: string; league_id?: string }
+    >({
       query: (params) => {
         const searchParams = new URLSearchParams();
         if (params.search) searchParams.append("search", params.search);
+        if (params.league_id)
+          searchParams.append("league_id", params.league_id);
 
         return `/client/fixture${
           searchParams.toString() ? `?${searchParams.toString()}` : ""
         }`;
       },
       providesTags: ["Fixtures"],
+    }),
+
+    getLeagues: builder.query<LeaguesResponse, void>({
+      query: () => "/client/league",
+      providesTags: ["Leagues"],
     }),
 
     getUserBets: builder.query<
@@ -152,6 +163,7 @@ export const bettingApi = createApi({
 export const {
   useGetMeQuery,
   useGetFixturesQuery,
+  useGetLeaguesQuery,
   useGetUserBetsQuery,
   useCreateBetMutation,
 } = bettingApi;

@@ -216,9 +216,10 @@ export const bettingApi = createApi({
         method: "PUT",
         body,
       }),
-      invalidatesTags: ["Cup"],
+      invalidatesTags: ["Cup", "User"],
       // Patch getMe on success so the gate redirect doesn't briefly see the
-      // stale null username and bounce back.
+      // stale null username and bounce back (the User invalidation then
+      // reconciles with the server, but the patch is what prevents the flash).
       async onQueryStarted({ username }, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;

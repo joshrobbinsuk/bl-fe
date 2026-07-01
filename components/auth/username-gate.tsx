@@ -28,7 +28,9 @@ export function UsernameGate({ children }: { children: React.ReactNode }) {
 
   // Hold rendering while we don't yet know, or while a redirect is pending, to
   // avoid flashing the wrong screen. On query error `me` is undefined and
-  // isLoading is false, so we fall through and let the page show its own state.
+  // isLoading is false, so we fall through to the page rather than trapping the
+  // user in a blank gate — it renders its normal state (balances show
+  // placeholders) until getMe recovers on the next refetch.
   if (isLoading) return null;
   if (needsUsername && !onGate) return null;
   if (me && !needsUsername && onGate) return null;

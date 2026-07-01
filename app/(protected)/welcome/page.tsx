@@ -35,6 +35,9 @@ export default function WelcomePage() {
         setError("That username is taken — try another.");
       } else if (status === 422) {
         setError("Use 3–20 letters, numbers or underscores.");
+      } else if (status === 400) {
+        // Already set (e.g. a stale second tab) — nothing to do here, move on.
+        router.replace("/fixtures");
       } else {
         setError("Something went wrong. Please try again.");
       }

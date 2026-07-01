@@ -83,7 +83,7 @@ export interface CupLeaderboardRow {
 
 export interface CupCurrentResponse {
   cup: Cup | null;
-  your_balance: string; // Decimal as string
+  your_balance: string | null; // Decimal as string
   your_rank: number | null;
   leaderboard: CupLeaderboardRow[];
 }

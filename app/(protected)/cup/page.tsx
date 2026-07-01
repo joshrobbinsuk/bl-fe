@@ -17,14 +17,15 @@ export default function CupPage() {
   );
 
   const { data: me } = useGetMeQuery();
-  const currentQuery = useGetCupCurrentQuery(undefined, {
-    skip: selectedCupId !== undefined,
-  });
+  // Always fetched so the selector knows which cup is "This week", even while
+  // viewing a past one.
+  const currentQuery = useGetCupCurrentQuery();
   const pastQuery = useGetCupQuery(selectedCupId ?? "", {
     skip: selectedCupId === undefined,
   });
 
   const isCurrent = selectedCupId === undefined;
+  const currentCupId = currentQuery.data?.cup?.id;
   const isLoading = isCurrent ? currentQuery.isLoading : pastQuery.isLoading;
   const error = isCurrent ? currentQuery.error : pastQuery.error;
 
@@ -32,12 +33,14 @@ export default function CupPage() {
   const leaderboard = isCurrent
     ? currentQuery.data?.leaderboard
     : pastQuery.data?.leaderboard;
-  // Past cups don't carry the viewer's own balance/rank; only the current view
-  // does. Fall back to `/me` for the balance on past weeks.
-  const yourBalance = isCurrent ? currentQuery.data?.your_balance : me?.balance;
-  const yourRank = isCurrent
-    ? currentQuery.data?.your_rank
-    : leaderboard?.find((row) => row.user_id === me?.id)?.rank ?? null;
+  // The current view carries your_balance/your_rank directly. Past cups don't,
+  // so derive your historical pot + rank from your own leaderboard row (or show
+  // nothing if you didn't enter that week).
+  const ownRow = leaderboard?.find((row) => row.user_id === me?.id);
+  const yourBalance = isCurrent
+    ? currentQuery.data?.your_balance
+    : ownRow?.balance ?? null;
+  const yourRank = isCurrent ? currentQuery.data?.your_rank : ownRow?.rank ?? null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-accent/10">
@@ -52,7 +55,11 @@ export default function CupPage() {
             </p>
           </div>
 
-          <WeekSelector value={selectedCupId} onChange={setSelectedCupId} />
+          <WeekSelector
+            value={selectedCupId}
+            currentCupId={currentCupId}
+            onChange={setSelectedCupId}
+          />
 
           {isLoading && (
             <div className="text-center py-12">

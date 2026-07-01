@@ -3,17 +3,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { displayNameFromEmail } from "@/lib/display-name";
+import { formatMoney } from "@/lib/money";
 import type { CupLeaderboardRow } from "@/lib/services/betting-api";
 
 interface CupLeaderboardProps {
   rows: CupLeaderboardRow[];
   currentUserId: string | undefined;
 }
-
-const money = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
 
 export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
   if (rows.length === 0) {
@@ -53,7 +49,7 @@ export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
                   {row.is_winner && <span aria-label="Winner">🏆</span>}
                 </div>
                 <span className="font-semibold tabular-nums">
-                  {money.format(Number.parseFloat(row.balance))}
+                  {formatMoney(row.balance)}
                 </span>
               </li>
             );

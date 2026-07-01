@@ -2,19 +2,15 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatMoney } from "@/lib/money";
 import type { Cup, CupStatus } from "@/lib/services/betting-api";
 
 interface CupHeaderProps {
   cup: Cup;
-  yourBalance: string | undefined;
+  yourBalance: string | null | undefined;
   yourRank: number | null | undefined;
   cupsWon: number | undefined;
 }
-
-const money = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
 
 function formatRange(start: string, end: string): string {
   const opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
@@ -52,10 +48,7 @@ export function CupHeader({
   yourRank,
   cupsWon,
 }: CupHeaderProps) {
-  const balanceLabel =
-    yourBalance !== undefined
-      ? money.format(Number.parseFloat(yourBalance))
-      : "--";
+  const balanceLabel = formatMoney(yourBalance);
 
   return (
     <Card>

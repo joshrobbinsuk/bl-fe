@@ -1,0 +1,61 @@
+"use client";
+
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { displayNameFromEmail } from "@/lib/display-name";
+import { formatMoney } from "@/lib/money";
+import type { CupLeaderboardRow } from "@/lib/services/betting-api";
+
+interface CupLeaderboardProps {
+  rows: CupLeaderboardRow[];
+  currentUserId: string | undefined;
+}
+
+export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
+  if (rows.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-muted-foreground">No entries yet this week</p>
+      </div>
+    );
+  }
+
+  return (
+    <Card>
+      <CardContent className="p-0">
+        <ul className="divide-y">
+          {rows.map((row) => {
+            const isSelf = row.user_id === currentUserId;
+            return (
+              <li
+                key={row.user_id}
+                className={cn(
+                  "flex items-center justify-between gap-3 px-4 py-3",
+                  isSelf && "bg-accent/60",
+                )}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground tabular-nums">
+                    {row.rank}
+                  </span>
+                  <span className="truncate font-medium">
+                    {displayNameFromEmail(row.email)}
+                    {isSelf && (
+                      <span className="ml-1 text-xs text-muted-foreground">
+                        (you)
+                      </span>
+                    )}
+                  </span>
+                  {row.is_winner && <span aria-label="Winner">🏆</span>}
+                </div>
+                <span className="font-semibold tabular-nums">
+                  {formatMoney(row.balance)}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </CardContent>
+    </Card>
+  );
+}

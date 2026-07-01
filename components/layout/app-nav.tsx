@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, ListChecks, LogOut } from "lucide-react";
+import { Trophy, ListChecks, Medal, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
@@ -35,6 +35,7 @@ export function AppNav() {
 
   const navItems = [
     { href: "/fixtures", label: "Fixtures", icon: Trophy },
+    { href: "/cup", label: "Cup", icon: Medal },
     { href: "/my-bets", label: "My Bets", icon: ListChecks },
   ];
 
@@ -70,7 +71,7 @@ export function AppNav() {
 
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 rounded-full border bg-muted/40 px-2.5 py-1 text-xs font-medium text-foreground sm:px-3 sm:text-sm">
-              <span className="text-muted-foreground">Balance</span>
+              <span className="text-muted-foreground">This week</span>
               <span className={isUserLoading ? "text-muted-foreground" : ""}>
                 {isUserLoading ? "Loading..." : balanceLabel}
               </span>

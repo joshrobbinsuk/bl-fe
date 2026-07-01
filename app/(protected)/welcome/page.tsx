@@ -1,0 +1,91 @@
+"use client";
+
+import type React from "react";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useSetUsernameMutation } from "@/lib/services/betting-api";
+
+export default function WelcomePage() {
+  const [username, setUsername] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [setUsernameMutation, { isLoading }] = useSetUsernameMutation();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      await setUsernameMutation({ username }).unwrap();
+      router.replace("/fixtures");
+    } catch (err) {
+      const status = (err as { status?: number }).status;
+      if (status === 409) {
+        setError("That username is taken — try another.");
+      } else if (status === 422) {
+        setError("Use 3–20 letters, numbers or underscores.");
+      } else if (status === 400) {
+        // Already set (e.g. a stale second tab) — nothing to do here, move on.
+        router.replace("/fixtures");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background to-accent/20">
+      <div className="w-full max-w-md space-y-4">
+        <div className="text-center space-y-2 mb-8">
+          <h1 className="text-4xl font-bold tracking-tight">BrokeLads</h1>
+          <p className="text-muted-foreground">A betting app by Josh Robbins</p>
+        </div>
+
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Welcome to BrokeLads</CardTitle>
+            <CardDescription>
+              A weekly betting cup. Everyone gets $1,000 of play money each week
+              and the biggest balance by Monday wins. First — pick a username.
+              It&apos;s how you&apos;ll show up on the leaderboard.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="e.g. josh_r"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  autoFocus
+                  required
+                />
+                <p className="text-xs text-muted-foreground">
+                  3–20 letters, numbers or underscores.
+                </p>
+                {error && <p className="text-sm text-destructive">{error}</p>}
+              </div>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Setting up..." : "Continue"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

@@ -12,6 +12,7 @@ export interface User {
   status: UserStatus;
   cognito_uuid: string;
   email: string;
+  username: string | null; // null until set at the first-run gate
   balance: string; // weekly cup pot, Decimal as string
   cups_won: number;
   created_at: string;
@@ -76,9 +77,10 @@ export interface Cup {
 export interface CupLeaderboardRow {
   rank: number;
   user_id: string;
-  email: string;
+  username: string | null;
   balance: string; // Decimal as string
   is_winner: boolean;
+  cups_won: number; // lifetime cup wins
 }
 
 export interface CupCurrentResponse {
@@ -207,6 +209,30 @@ export const bettingApi = createApi({
       }),
       invalidatesTags: ["Bets", "User", "Cup"],
     }),
+
+    setUsername: builder.mutation<{ username: string }, { username: string }>({
+      query: (body) => ({
+        url: "/client/me/username",
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["Cup", "User"],
+      // Patch getMe on success so the gate redirect doesn't briefly see the
+      // stale null username and bounce back (the User invalidation then
+      // reconciles with the server, but the patch is what prevents the flash).
+      async onQueryStarted({ username }, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            bettingApi.util.updateQueryData("getMe", undefined, (draft) => {
+              draft.username = username;
+            }),
+          );
+        } catch {
+          // Failure is surfaced to the caller via unwrap(); nothing to patch.
+        }
+      },
+    }),
   }),
 });
 
@@ -219,4 +245,5 @@ export const {
   useGetCupQuery,
   useGetCupsQuery,
   useCreateBetMutation,
+  useSetUsernameMutation,
 } = bettingApi;

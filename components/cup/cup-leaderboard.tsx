@@ -1,8 +1,8 @@
 "use client";
 
+import { Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { displayNameFromEmail } from "@/lib/display-name";
 import { formatMoney } from "@/lib/money";
 import type { CupLeaderboardRow } from "@/lib/services/betting-api";
 
@@ -39,13 +39,24 @@ export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
                     {row.rank}
                   </span>
                   <span className="truncate font-medium">
-                    {displayNameFromEmail(row.email)}
+                    {row.username ?? "—"}
                     {isSelf && (
                       <span className="ml-1 text-xs text-muted-foreground">
                         (you)
                       </span>
                     )}
                   </span>
+                  {row.cups_won > 0 && (
+                    <span
+                      className="flex shrink-0 items-center gap-0.5 text-xs text-muted-foreground"
+                      title={`${row.cups_won} cup ${
+                        row.cups_won === 1 ? "win" : "wins"
+                      }`}
+                    >
+                      <Trophy className="h-3 w-3" />
+                      {row.cups_won}
+                    </span>
+                  )}
                   {row.is_winner && <span aria-label="Winner">🏆</span>}
                 </div>
                 <span className="font-semibold tabular-nums">

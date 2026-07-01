@@ -53,6 +53,12 @@ export default function CupPage() {
             <p className="text-muted-foreground">
               Biggest pot at the end of the week wins.
             </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Every Monday everyone starts fresh with $1,000. You&apos;re in the
+              moment you place your first bet — no signup. Whoever has the
+              biggest balance when the week closes takes the cup; tie and you
+              both win.
+            </p>
           </div>
 
           <WeekSelector

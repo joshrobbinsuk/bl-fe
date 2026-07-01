@@ -79,7 +79,14 @@ export function PunditDrawer({ fixtureIds }: PunditDrawerProps) {
           Ask the Pundit
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:max-w-md p-0">
+      <SheetContent
+        side="right"
+        // Don't auto-focus the input on open: on iOS that slams the keyboard up
+        // before layout settles and shoves the input off-screen. Open calm, let
+        // the user tap to type. dvh gives a true full-height panel.
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        className="h-[100dvh] w-full p-0 sm:max-w-md"
+      >
         <SheetHeader className="border-b">
           <SheetTitle className="flex items-center gap-2">
             <MessageCircle className="size-4" />

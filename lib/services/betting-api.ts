@@ -5,12 +5,15 @@ export type FixtureResult = "HOME" | "AWAY" | "DRAW";
 export type BetOutcome = "UNDECIDED" | "WON" | "LOST" | "VOIDED";
 export type UserStatus = "ACTIVE" | "DISABLED" | "INVITED";
 
+export type CupStatus = "OPEN" | "CLOSING" | "SETTLED";
+
 export interface User {
   id: string;
   status: UserStatus;
   cognito_uuid: string;
   email: string;
-  balance: string; // Decimal as string
+  balance: string; // weekly cup pot, Decimal as string
+  cups_won: number;
   created_at: string;
   updated_at: string;
 }
@@ -63,6 +66,37 @@ export interface CreateBetRequest {
   stake: number;
 }
 
+export interface Cup {
+  id: string;
+  week_start: string; // ISO datetime
+  week_end: string; // ISO datetime
+  status: CupStatus;
+}
+
+export interface CupLeaderboardRow {
+  rank: number;
+  user_id: string;
+  email: string;
+  balance: string; // Decimal as string
+  is_winner: boolean;
+}
+
+export interface CupCurrentResponse {
+  cup: Cup | null;
+  your_balance: string; // Decimal as string
+  your_rank: number | null;
+  leaderboard: CupLeaderboardRow[];
+}
+
+export interface CupResponse {
+  cup: Cup;
+  leaderboard: CupLeaderboardRow[];
+}
+
+export interface CupsResponse {
+  cups: Cup[];
+}
+
 export interface FixturesResponse {
   fixtures: Fixture[];
 }
@@ -105,7 +139,7 @@ const baseQuery = fetchBaseQuery({
 export const bettingApi = createApi({
   reducerPath: "bettingApi",
   baseQuery: baseQuery,
-  tagTypes: ["Fixtures", "Bets", "User", "Leagues"],
+  tagTypes: ["Fixtures", "Bets", "User", "Leagues", "Cup"],
   endpoints: (builder) => ({
     getMe: builder.query<User, void>({
       query: () => "/client/me",
@@ -135,12 +169,13 @@ export const bettingApi = createApi({
 
     getUserBets: builder.query<
       BetsResponse,
-      { outcome?: string; search?: string }
+      { outcome?: string; search?: string; cup_id?: string }
     >({
       query: (params) => {
         const searchParams = new URLSearchParams();
         if (params.outcome) searchParams.append("outcome", params.outcome);
         if (params.search) searchParams.append("search", params.search);
+        if (params.cup_id) searchParams.append("cup_id", params.cup_id);
 
         return `/client/bet${
           searchParams.toString() ? `?${searchParams.toString()}` : ""
@@ -149,13 +184,28 @@ export const bettingApi = createApi({
       providesTags: ["Bets"],
     }),
 
+    getCupCurrent: builder.query<CupCurrentResponse, void>({
+      query: () => "/client/cup/current",
+      providesTags: ["Cup"],
+    }),
+
+    getCup: builder.query<CupResponse, string>({
+      query: (id) => `/client/cup/${id}`,
+      providesTags: ["Cup"],
+    }),
+
+    getCups: builder.query<CupsResponse, void>({
+      query: () => "/client/cups",
+      providesTags: ["Cup"],
+    }),
+
     createBet: builder.mutation<CreateBetResponse, CreateBetRequest>({
       query: (bet) => ({
         url: "/client/bet",
         method: "POST",
         body: bet,
       }),
-      invalidatesTags: ["Bets", "User"],
+      invalidatesTags: ["Bets", "User", "Cup"],
     }),
   }),
 });
@@ -165,5 +215,8 @@ export const {
   useGetFixturesQuery,
   useGetLeaguesQuery,
   useGetUserBetsQuery,
+  useGetCupCurrentQuery,
+  useGetCupQuery,
+  useGetCupsQuery,
   useCreateBetMutation,
 } = bettingApi;

@@ -6,11 +6,15 @@ import { BetCard } from "@/components/bets/bet-card";
 import { AppNav } from "@/components/layout/app-nav";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SearchInput } from "@/components/ui/search-input";
+import { WeekSelector } from "@/components/cup/week-selector";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 
 export default function MyBetsPage() {
   const [filter, setFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCupId, setSelectedCupId] = useState<string | undefined>(
+    undefined,
+  );
   const debouncedSearch = useDebouncedValue(searchTerm.trim(), 300);
   const outcome =
     filter === "all"
@@ -21,6 +25,7 @@ export default function MyBetsPage() {
   const { data, isLoading, error } = useGetUserBetsQuery({
     outcome,
     search: debouncedSearch || undefined,
+    cup_id: selectedCupId,
   });
 
   return (
@@ -37,6 +42,7 @@ export default function MyBetsPage() {
           </div>
 
           <div className="flex flex-col gap-3">
+            <WeekSelector value={selectedCupId} onChange={setSelectedCupId} />
             <SearchInput
               className="w-full sm:w-64"
               placeholder="Search teams or venues..."

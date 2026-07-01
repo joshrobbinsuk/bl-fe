@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useGetUserBetsQuery } from "@/lib/services/betting-api";
+import {
+  useGetCupCurrentQuery,
+  useGetUserBetsQuery,
+} from "@/lib/services/betting-api";
 import { BetCard } from "@/components/bets/bet-card";
 import { AppNav } from "@/components/layout/app-nav";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,6 +18,7 @@ export default function MyBetsPage() {
   const [selectedCupId, setSelectedCupId] = useState<string | undefined>(
     undefined,
   );
+  const currentCupId = useGetCupCurrentQuery().data?.cup?.id;
   const debouncedSearch = useDebouncedValue(searchTerm.trim(), 300);
   const outcome =
     filter === "all"
@@ -42,7 +46,11 @@ export default function MyBetsPage() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <WeekSelector value={selectedCupId} onChange={setSelectedCupId} />
+            <WeekSelector
+              value={selectedCupId}
+              onChange={setSelectedCupId}
+              currentCupId={currentCupId}
+            />
             <SearchInput
               className="w-full sm:w-64"
               placeholder="Search teams or venues..."

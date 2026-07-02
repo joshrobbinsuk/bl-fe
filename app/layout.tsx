@@ -1,5 +1,5 @@
 import type React from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { AmplifyProvider } from "@/components/providers/amplify-provider";
@@ -18,6 +18,12 @@ export const metadata: Metadata = {
     icon: "/icon.svg",
     apple: "/apple-icon.png",
   },
+};
+
+export const viewport: Viewport = {
+  // Shrink the layout when the on-screen keyboard opens so fixed panels resize
+  // with it instead of the page bleeding through above the keyboard.
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({

@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { ConfirmForm } from "@/components/auth/confirm-form";
 
@@ -12,7 +13,9 @@ export default function ConfirmPage() {
           <p className="text-muted-foreground">Confirm your email</p>
         </div>
 
-        <ConfirmForm />
+        <Suspense fallback={null}>
+          <ConfirmForm />
+        </Suspense>
 
         <p className="text-center text-sm text-muted-foreground">
           Already confirmed?{" "}

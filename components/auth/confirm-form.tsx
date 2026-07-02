@@ -2,8 +2,8 @@
 
 import type React from "react";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,30 +16,18 @@ import {
 } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import {
-  clearPendingConfirmEmail,
-  getPendingConfirmEmail,
-} from "@/lib/pending-confirm";
 
 const RESEND_COOLDOWN_SECONDS = 30;
 
-const emptySubscribe = () => () => {};
-
 export function ConfirmForm() {
-  const pendingEmail = useSyncExternalStore(
-    emptySubscribe,
-    () => getPendingConfirmEmail() ?? "",
-    () => "",
-  );
-  const [typedEmail, setTypedEmail] = useState("");
+  const searchParams = useSearchParams();
+  const [email, setEmail] = useState(searchParams.get("email") ?? "");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const { confirmSignUp, resendSignUpCode } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
-
-  const email = pendingEmail || typedEmail;
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -53,7 +41,6 @@ export function ConfirmForm() {
 
     try {
       await confirmSignUp(email, code);
-      clearPendingConfirmEmail();
       toast({
         title: "Confirmed",
         description: "You're all set — log in to get started.",
@@ -101,26 +88,22 @@ export function ConfirmForm() {
       <CardHeader>
         <CardTitle>Confirm your account</CardTitle>
         <CardDescription>
-          {pendingEmail
-            ? `Enter the confirmation code we sent to ${pendingEmail}.`
-            : "Enter your email and the confirmation code we sent you."}
+          Enter the confirmation code we emailed you.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleConfirm} className="space-y-4">
-          {!pendingEmail && (
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={typedEmail}
-                onChange={(e) => setTypedEmail(e.target.value)}
-                required
-              />
-            </div>
-          )}
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="code">Confirmation code</Label>
             <Input

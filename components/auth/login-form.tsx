@@ -10,18 +10,23 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/hooks/use-auth"
 import { useToast } from "@/hooks/use-toast"
-import { setPendingConfirmEmail } from "@/lib/pending-confirm"
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
-  const { signIn, resendSignUpCode } = useAuth()
+  const { signIn, signOut, resendSignUpCode } = useAuth()
   const { toast } = useToast()
   const router = useRouter()
 
   const goConfirm = async () => {
-    setPendingConfirmEmail(email)
+    // signIn on an unconfirmed user leaves a half-finished sign-in in Amplify's
+    // token store; clear it so the next real sign-in starts from a clean slate.
+    try {
+      await signOut()
+    } catch {
+      // No session to clear is fine.
+    }
     try {
       await resendSignUpCode(email)
     } catch {
@@ -31,7 +36,7 @@ export function LoginForm() {
       title: "Confirm your email first",
       description: "We've sent you a fresh confirmation code.",
     })
-    router.push("/confirm")
+    router.push(`/confirm?email=${encodeURIComponent(email)}`)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

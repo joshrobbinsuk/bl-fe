@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/hooks/use-auth"
 import { useToast } from "@/hooks/use-toast"
-import { setPendingConfirmEmail } from "@/lib/pending-confirm"
 
 export function SignupForm() {
   const [email, setEmail] = useState("")
@@ -22,9 +21,8 @@ export function SignupForm() {
   const router = useRouter()
 
   const goConfirm = (description: string) => {
-    setPendingConfirmEmail(email)
     toast({ title: "Almost there", description })
-    router.push("/confirm")
+    router.push(`/confirm?email=${encodeURIComponent(email)}`)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

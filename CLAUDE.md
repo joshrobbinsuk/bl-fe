@@ -55,7 +55,7 @@ NEXT_PUBLIC_AMPLIFY_REGION=eu-west-2
 
 The Cognito pool/client must match the backend's (`COGNITO_CLIENT_ID` / `USER_POOL_ID`) or token verification fails.
 
-The "Ask the Pundit" drawer (`/fixtures`) streams from `POST /client/pundit` via a manual `fetch` reusing `NEXT_PUBLIC_API_URL` and the Cognito idToken — **no new Vercel env needed**. The backend needs `OPENAI_API_KEY` set for live replies.
+The "Ask the Pundit" chat streams from `POST /client/pundit` via a manual `fetch` reusing `NEXT_PUBLIC_API_URL` and the Cognito idToken — **no new Vercel env needed**. The backend needs `OPENAI_API_KEY` set for live replies. The chat body lives in `components/pundit/pundit-chat.tsx` and is shown two ways: a right-side `Sheet` drawer on desktop `/fixtures` (`pundit-drawer.tsx`, hidden below `md`) and a full-page route at `/pundit` (`app/(protected)/pundit/page.tsx`) reached from the mobile bottom nav. Both pull `fixtureIds` from `useGetFixturesQuery`; a send is blocked (toast) when there are no visible fixtures.
 
 ## Branches
 

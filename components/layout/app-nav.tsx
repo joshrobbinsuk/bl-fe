@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, ListChecks, Medal, LogOut } from "lucide-react";
+import { Trophy, ListChecks, Medal, MessageCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
@@ -37,6 +37,11 @@ export function AppNav() {
     { href: "/fixtures", label: "Fixtures", icon: Trophy },
     { href: "/my-bets", label: "My Bets", icon: ListChecks },
     { href: "/cup", label: "Cup", icon: Medal },
+  ];
+
+  const mobileNavItems = [
+    ...navItems,
+    { href: "/pundit", label: "Pundit", icon: MessageCircle },
   ];
 
   return (
@@ -88,7 +93,7 @@ export function AppNav() {
 
       <div className="md:hidden border-t">
         <div className="container mx-auto px-4 py-2 flex items-center justify-around">
-          {navItems.map((item) => {
+          {mobileNavItems.map((item) => {
             const Icon = item.icon;
             return (
               <Link

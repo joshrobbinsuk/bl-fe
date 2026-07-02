@@ -17,8 +17,8 @@ test.describe("weekly cup", () => {
     await expect(page.getByText("Weekly Cup")).toBeVisible();
     await expect(page.getByText("Your pot")).toBeVisible();
 
-    // Capture the "This week" pot from the nav before betting.
-    const potPill = page.locator("nav >> text=This week").locator("..");
+    // Capture the pot pill from the nav before betting.
+    const potPill = page.getByTestId("balance-pill").first();
     const potBefore = (await potPill.innerText()).trim();
 
     // Place a bet on the first available fixture.

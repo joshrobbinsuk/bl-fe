@@ -42,7 +42,7 @@ export function AppNav() {
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+        <div className="relative flex h-16 items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/fixtures" className="font-bold text-xl">
               BrokeLads
@@ -72,7 +72,7 @@ export function AppNav() {
           <div className="flex items-center gap-3">
             <div
               data-testid="balance-pill"
-              className="flex items-center gap-2 rounded-full border bg-muted/40 px-2.5 py-1 text-xs font-medium text-foreground sm:px-3 sm:text-sm"
+              className="flex items-center gap-2 rounded-full border bg-muted/40 px-2.5 py-1 text-xs font-medium text-foreground max-md:absolute max-md:left-1/2 max-md:top-1/2 max-md:-translate-x-1/2 max-md:-translate-y-1/2 sm:px-3 sm:text-sm"
             >
               <span className={isUserLoading ? "text-muted-foreground" : ""}>
                 {isUserLoading ? "Loading..." : balanceLabel}

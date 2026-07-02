@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   PunditStreamError,
   streamPunditResponse,
@@ -8,23 +15,28 @@ import {
 } from "@/lib/pundit-stream";
 import { useToast } from "@/hooks/use-toast";
 
-export type { PunditTurn } from "@/lib/pundit-stream";
+const GREETING: PunditTurn = {
+  role: "assistant",
+  content:
+    "Awright son. Ask us about team news, who to back, or how your bets are lookin'.",
+};
 
-interface UsePunditChat {
+interface PunditChatContextValue {
   messages: PunditTurn[];
   streaming: boolean;
   streamingContent: string;
-  send: (text: string) => void;
+  send: (text: string, fixtureIds: string[]) => void;
   abort: () => void;
 }
 
-/**
- * Session-only pundit conversation. Each send appends a user turn, posts the
- * full conversation (ending with that user turn), and streams the assistant
- * reply into a growing buffer that is committed as an assistant turn on done.
- */
-export function usePunditChat(fixtureIds: string[]): UsePunditChat {
-  const [messages, setMessages] = useState<PunditTurn[]>([]);
+const PunditChatContext = createContext<PunditChatContextValue | null>(null);
+
+export function PunditChatProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [messages, setMessages] = useState<PunditTurn[]>([GREETING]);
   const [streaming, setStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
   const { toast } = useToast();
@@ -39,7 +51,7 @@ export function usePunditChat(fixtureIds: string[]): UsePunditChat {
   useEffect(() => abort, [abort]);
 
   const send = useCallback(
-    (text: string) => {
+    (text: string, fixtureIds: string[]) => {
       const content = text.trim();
       if (!content || streaming) return;
 
@@ -115,8 +127,22 @@ export function usePunditChat(fixtureIds: string[]): UsePunditChat {
           setStreaming(false);
         });
     },
-    [fixtureIds, messages, streaming, toast],
+    [messages, streaming, toast],
   );
 
-  return { messages, streaming, streamingContent, send, abort };
+  return (
+    <PunditChatContext.Provider
+      value={{ messages, streaming, streamingContent, send, abort }}
+    >
+      {children}
+    </PunditChatContext.Provider>
+  );
+}
+
+export function usePunditChat(): PunditChatContextValue {
+  const ctx = useContext(PunditChatContext);
+  if (!ctx) {
+    throw new Error("usePunditChat must be used within a PunditChatProvider");
+  }
+  return ctx;
 }

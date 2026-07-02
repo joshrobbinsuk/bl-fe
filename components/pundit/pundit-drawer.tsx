@@ -38,9 +38,7 @@ export function PunditDrawer({ fixtureIds }: PunditDrawerProps) {
             <MessageCircle className="size-4" />
             Ask the Pundit
           </SheetTitle>
-          <SheetDescription>
-            A grounded steer on the fixtures you can bet on right now.
-          </SheetDescription>
+          <SheetDescription>Right, let&apos;s &apos;ave it.</SheetDescription>
         </SheetHeader>
 
         <PunditChat fixtureIds={fixtureIds} />

@@ -9,23 +9,19 @@ export default function PunditPage() {
   const fixtureIds = data?.fixtures?.map((f) => f.id) ?? [];
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-gradient-to-br from-background to-accent/10">
+    <div className="flex h-[100dvh] flex-col bg-gradient-to-br from-background to-accent/10">
       <AppNav />
 
-      <main className="flex flex-1 flex-col">
-        <div className="border-b px-4 py-3">
-          <h1 className="flex items-center gap-2 text-lg font-semibold">
-            Ask the Pundit
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            A grounded steer on the fixtures you can bet on right now.
-          </p>
-        </div>
+      <div className="border-b px-4 py-3">
+        <h1 className="flex items-center gap-2 text-lg font-semibold">
+          Ask the Pundit
+        </h1>
+        <p className="text-muted-foreground text-sm">Right, let&apos;s &apos;ave it.</p>
+      </div>
 
-        <div className="flex-1">
-          <PunditChat fixtureIds={fixtureIds} />
-        </div>
-      </main>
+      <div className="min-h-0 flex-1">
+        <PunditChat fixtureIds={fixtureIds} />
+      </div>
     </div>
   );
 }

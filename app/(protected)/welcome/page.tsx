@@ -28,7 +28,8 @@ export default function WelcomePage() {
 
     try {
       await setUsernameMutation({ username }).unwrap();
-      router.replace("/fixtures");
+      // UsernameGate owns the redirect: the mutation patches getMe, so the gate
+      // sees a non-null username and navigates to /fixtures on its own.
     } catch (err) {
       const status = (err as { status?: number }).status;
       if (status === 409) {

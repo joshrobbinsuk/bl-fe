@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { usePunditChat } from "@/hooks/use-pundit-chat";
+import { useVisualViewport } from "@/hooks/use-visual-viewport";
 
 interface PunditDrawerProps {
   fixtureIds: string[];
@@ -55,6 +56,7 @@ export function PunditDrawer({ fixtureIds }: PunditDrawerProps) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const viewport = useVisualViewport();
 
   const handleOpenChange = (next: boolean) => {
     if (!next) abort();
@@ -86,6 +88,14 @@ export function PunditDrawer({ fixtureIds }: PunditDrawerProps) {
         // the user tap to type. dvh gives a true full-height panel.
         onOpenAutoFocus={(e) => e.preventDefault()}
         className="h-[100dvh] w-full p-0 sm:max-w-md"
+        // When the keyboard opens, dvh doesn't shrink, so the panel overhangs
+        // the visible area and the page bleeds through. Pin the panel to the
+        // visual viewport instead, keeping the input flush above the keyboard.
+        style={
+          viewport
+            ? { height: `${viewport.height}px`, top: `${viewport.offsetTop}px`, bottom: "auto" }
+            : undefined
+        }
       >
         <SheetHeader className="border-b">
           <SheetTitle className="flex items-center gap-2">

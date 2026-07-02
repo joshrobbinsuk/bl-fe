@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -15,10 +16,14 @@ export function SignupForm() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
-  const [code, setCode] = useState("")
-  const { signUp, confirmSignUp } = useAuth()
+  const { signUp, resendSignUpCode } = useAuth()
   const { toast } = useToast()
+  const router = useRouter()
+
+  const goConfirm = (description: string) => {
+    toast({ title: "Almost there", description })
+    router.push(`/confirm?email=${encodeURIComponent(email)}`)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,71 +41,32 @@ export function SignupForm() {
 
     try {
       await signUp(email, password)
-      setShowConfirm(true)
-      toast({
-        title: "Success",
-        description: "Check your email for confirmation code",
-      })
+      goConfirm("Check your email for a confirmation code.")
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to sign up",
-        variant: "destructive",
-      })
+      if (error.name === "UsernameExistsException") {
+        // Email already registered — but confirmed or abandoned? Probe with a
+        // resend: it succeeds for an unconfirmed account and throws for a
+        // confirmed one, so we route each to where it can actually get in.
+        try {
+          await resendSignUpCode(email)
+          goConfirm("Looks like you already started — here's a fresh code.")
+        } catch {
+          toast({
+            title: "You already have an account",
+            description: "Log in instead.",
+          })
+          router.push("/login")
+        }
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to sign up",
+          variant: "destructive",
+        })
+      }
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleConfirm = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-
-    try {
-      await confirmSignUp(email, code)
-      toast({
-        title: "Success",
-        description: "Account confirmed! You can now login.",
-      })
-      window.location.href = "/login"
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to confirm account",
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (showConfirm) {
-    return (
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Confirm Account</CardTitle>
-          <CardDescription>Enter the confirmation code sent to your email</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleConfirm} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="code">Confirmation Code</Label>
-              <Input
-                id="code"
-                type="text"
-                placeholder="123456"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Confirming..." : "Confirm Account"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    )
   }
 
   return (

@@ -37,7 +37,9 @@ export default function FixturesPage() {
                 Place your bets on upcoming matches
               </p>
             </div>
-            <PunditDrawer fixtureIds={fixtureIds} />
+            <div className="hidden md:block">
+              <PunditDrawer fixtureIds={fixtureIds} />
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">

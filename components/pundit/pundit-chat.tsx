@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
-import { usePunditChat } from "@/hooks/use-pundit-chat";
+import { usePunditChat } from "@/components/pundit/pundit-chat-provider";
 
 interface PunditChatProps {
   fixtureIds: string[];
@@ -39,8 +39,7 @@ function Bubble({
 }
 
 export function PunditChat({ fixtureIds }: PunditChatProps) {
-  const { messages, streaming, streamingContent, send } =
-    usePunditChat(fixtureIds);
+  const { messages, streaming, streamingContent, send } = usePunditChat();
   const [draft, setDraft] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -50,21 +49,13 @@ export function PunditChat({ fixtureIds }: PunditChatProps) {
 
   const handleSend = () => {
     if (!draft.trim() || streaming) return;
-    send(draft);
+    send(draft, fixtureIds);
     setDraft("");
   };
 
   return (
     <div className="flex h-full flex-col">
       <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
-        {messages.length === 0 && !streaming && (
-          <p className="text-muted-foreground text-sm">
-            Ask about today&apos;s slate — form, value, who to watch. I can also
-            pull the latest news on a single fixture if you ask. No certainties,
-            just opinions.
-          </p>
-        )}
-
         {messages.map((m, i) => (
           <Bubble key={i} role={m.role}>
             {m.content}

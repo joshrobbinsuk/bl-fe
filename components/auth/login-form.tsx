@@ -10,32 +10,59 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/hooks/use-auth"
 import { useToast } from "@/hooks/use-toast"
+import { setPendingConfirmEmail } from "@/lib/pending-confirm"
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
-  const { signIn } = useAuth()
+  const { signIn, resendSignUpCode } = useAuth()
   const { toast } = useToast()
   const router = useRouter()
+
+  const goConfirm = async () => {
+    setPendingConfirmEmail(email)
+    try {
+      await resendSignUpCode(email)
+    } catch {
+      // Resend can fail (e.g. rate limit); the code screen still lets them retry.
+    }
+    toast({
+      title: "Confirm your email first",
+      description: "We've sent you a fresh confirmation code.",
+    })
+    router.push("/confirm")
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      await signIn(email, password)
+      const result = await signIn(email, password)
+      // Amplify v6 doesn't throw for an unconfirmed user — it returns a
+      // CONFIRM_SIGN_UP next step. Route them into the confirm flow instead of
+      // treating it as a successful login.
+      if (result?.nextStep?.signInStep === "CONFIRM_SIGN_UP") {
+        await goConfirm()
+        return
+      }
       toast({
         title: "Success",
         description: "Logged in successfully",
       })
       router.push("/fixtures")
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to login",
-        variant: "destructive",
-      })
+      // Older Cognito setups throw instead of returning the next step.
+      if (error.name === "UserNotConfirmedException") {
+        await goConfirm()
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to login",
+          variant: "destructive",
+        })
+      }
     } finally {
       setLoading(false)
     }

@@ -2,13 +2,34 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, ListChecks, Medal, MessageCircle, LogOut } from "lucide-react";
+import { ListChecks, Trophy, MessageCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useGetMeQuery } from "@/lib/services/betting-api";
 
 import { cn } from "@/lib/utils";
+
+function SoccerBall(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 7.5 8 10.4l1.5 4.6h5L16 10.4 12 7.5Z" />
+      <path d="M12 7.5V4M8 10.4 5 8.5M9.5 15 7 18M14.5 15 17 18M16 10.4 19 8.5" />
+    </svg>
+  );
+}
 
 export function AppNav() {
   const pathname = usePathname();
@@ -34,9 +55,9 @@ export function AppNav() {
   };
 
   const navItems = [
-    { href: "/fixtures", label: "Fixtures", icon: Trophy },
+    { href: "/fixtures", label: "Fixtures", icon: SoccerBall },
     { href: "/my-bets", label: "My Bets", icon: ListChecks },
-    { href: "/cup", label: "Cup", icon: Medal },
+    { href: "/cup", label: "Cup", icon: Trophy },
   ];
 
   const mobileNavItems = [

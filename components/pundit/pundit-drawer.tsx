@@ -41,7 +41,9 @@ export function PunditDrawer({ fixtureIds }: PunditDrawerProps) {
           <SheetDescription>Right, let&apos;s &apos;ave it.</SheetDescription>
         </SheetHeader>
 
-        <PunditChat fixtureIds={fixtureIds} />
+        <div className="min-h-0 flex-1">
+          <PunditChat fixtureIds={fixtureIds} />
+        </div>
       </SheetContent>
     </Sheet>
   );

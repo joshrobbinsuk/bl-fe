@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -14,12 +15,16 @@ import {
   type PunditTurn,
 } from "@/lib/pundit-stream";
 import { useToast } from "@/hooks/use-toast";
+import { useGetMeQuery } from "@/lib/services/betting-api";
 
-const GREETING: PunditTurn = {
-  role: "assistant",
-  content:
-    "Awright son. Ask us about team news, who to back, or how your bets are lookin'.",
-};
+function buildGreeting(username: string | null): PunditTurn {
+  return {
+    role: "assistant",
+    content: username
+      ? `Awright ${username}! Ask us about team news, who to back, or how your bets are lookin'.`
+      : "Awright son. Ask us about team news, who to back, or how your bets are lookin'.",
+  };
+}
 
 interface PunditChatContextValue {
   messages: PunditTurn[];
@@ -36,7 +41,17 @@ export function PunditChatProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [messages, setMessages] = useState<PunditTurn[]>([GREETING]);
+  // Provider mounts above UsernameGate, so `me` may still be loading (or the
+  // username may still be null) when this first renders — the greeting is
+  // derived rather than stored, so it stays in sync as `me` arrives without
+  // needing an effect to patch stored state.
+  const { data: me } = useGetMeQuery();
+  const username = me?.username ?? null;
+  const [turns, setTurns] = useState<PunditTurn[]>([]);
+  const messages = useMemo(
+    () => [buildGreeting(username), ...turns],
+    [username, turns],
+  );
   const [streaming, setStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
   const { toast } = useToast();
@@ -66,7 +81,7 @@ export function PunditChatProvider({
 
       const userTurn: PunditTurn = { role: "user", content };
       const conversation = [...messages, userTurn];
-      setMessages(conversation);
+      setTurns((prev) => [...prev, userTurn]);
       setStreaming(true);
       setStreamingContent("");
       bufferRef.current = "";
@@ -118,10 +133,7 @@ export function PunditChatProvider({
           if (controllerRef.current === controller) controllerRef.current = null;
           const reply = bufferRef.current;
           if (committable && reply) {
-            setMessages((prev) => [
-              ...prev,
-              { role: "assistant", content: reply },
-            ]);
+            setTurns((prev) => [...prev, { role: "assistant", content: reply }]);
           }
           setStreamingContent("");
           setStreaming(false);

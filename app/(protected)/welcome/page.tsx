@@ -14,13 +14,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useSetUsernameMutation } from "@/lib/services/betting-api";
+import {
+  useGetMeQuery,
+  useSetAvatarMutation,
+  useSetUsernameMutation,
+} from "@/lib/services/betting-api";
+import { defaultAvatarFor } from "@/lib/avatars";
+import { AvatarPicker } from "@/components/profile/avatar-picker";
 
 export default function WelcomePage() {
+  const { data: me } = useGetMeQuery();
   const [username, setUsername] = useState("");
+  const [avatar, setAvatar] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [setUsernameMutation, { isLoading }] = useSetUsernameMutation();
+  const [setAvatarMutation] = useSetAvatarMutation();
   const router = useRouter();
+
+  const selectedAvatar = avatar ?? (me ? defaultAvatarFor(me.id) : null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +39,14 @@ export default function WelcomePage() {
 
     try {
       await setUsernameMutation({ username }).unwrap();
+      if (selectedAvatar) {
+        try {
+          await setAvatarMutation({ avatar: selectedAvatar }).unwrap();
+        } catch {
+          // Avatar failure after a successful username set is fine — the
+          // user just keeps the fallback disc until they try again.
+        }
+      }
       // UsernameGate owns the redirect: the mutation patches getMe, so the gate
       // sees a non-null username and navigates to /fixtures on its own.
     } catch (err) {
@@ -80,6 +99,15 @@ export default function WelcomePage() {
                 </p>
                 {error && <p className="text-sm text-destructive">{error}</p>}
               </div>
+              {selectedAvatar && (
+                <div className="space-y-2">
+                  <Label>Avatar</Label>
+                  <AvatarPicker
+                    value={selectedAvatar}
+                    onChange={setAvatar}
+                  />
+                </div>
+              )}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Setting up..." : "Continue"}
               </Button>

@@ -2,8 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ListChecks, Trophy, MessageCircle, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ChevronDown, ListChecks, Trophy, MessageCircle, LogOut } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { UserAvatar } from "@/components/profile/user-avatar";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useGetMeQuery } from "@/lib/services/betting-api";
@@ -104,10 +112,39 @@ export function AppNav() {
                 {isUserLoading ? "Loading..." : balanceLabel}
               </span>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => handleSignOut()}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                aria-label="Account menu"
+                className="flex items-center gap-1 rounded-full outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              >
+                <UserAvatar
+                  avatar={me?.avatar ?? null}
+                  userId={me?.id ?? ""}
+                  username={me?.username ?? null}
+                />
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">
+                      {me?.username ?? "..."}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {me?.email}
+                    </span>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/profile">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSignOut()}>
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

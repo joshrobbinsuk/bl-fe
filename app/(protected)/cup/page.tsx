@@ -7,7 +7,6 @@ import {
   useGetMeQuery,
 } from "@/lib/services/betting-api";
 import { AppNav } from "@/components/layout/app-nav";
-import { CupHeader } from "@/components/cup/cup-header";
 import { CupLeaderboard } from "@/components/cup/cup-leaderboard";
 import { WeekSelector } from "@/components/cup/week-selector";
 
@@ -33,14 +32,6 @@ export default function CupPage() {
   const leaderboard = isCurrent
     ? currentQuery.data?.leaderboard
     : pastQuery.data?.leaderboard;
-  // The current view carries your_balance/your_rank directly. Past cups don't,
-  // so derive your historical pot + rank from your own leaderboard row (or show
-  // nothing if you didn't enter that week).
-  const ownRow = leaderboard?.find((row) => row.user_id === me?.id);
-  const yourBalance = isCurrent
-    ? currentQuery.data?.your_balance
-    : ownRow?.balance ?? null;
-  const yourRank = isCurrent ? currentQuery.data?.your_rank : ownRow?.rank ?? null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-accent/10">
@@ -49,9 +40,9 @@ export default function CupPage() {
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Cup</h1>
+            <h1 className="text-3xl font-bold tracking-tight mb-2">Weekly Cup</h1>
             <p className="text-muted-foreground">
-              Biggest pot at the end of the week wins. Refreshes Sunday midnight.
+              Biggest pot at the end of the week wins. Refreshes to $1000 on Monday.
             </p>
           </div>
 
@@ -85,18 +76,7 @@ export default function CupPage() {
           )}
 
           {cup && (
-            <>
-              <CupHeader
-                cup={cup}
-                yourBalance={yourBalance}
-                yourRank={yourRank}
-                cupsWon={me?.cups_won}
-              />
-              <CupLeaderboard
-                rows={leaderboard ?? []}
-                currentUserId={me?.id}
-              />
-            </>
+            <CupLeaderboard rows={leaderboard ?? []} currentUserId={me?.id} />
           )}
         </div>
       </div>

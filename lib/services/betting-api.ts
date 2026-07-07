@@ -13,6 +13,7 @@ export interface User {
   cognito_uuid: string;
   email: string;
   username: string | null; // null until set at the first-run gate
+  avatar: string | null; // "<icon>-<colour>", null until chosen
   balance: string; // weekly cup pot, Decimal as string
   cups_won: number;
   created_at: string;
@@ -78,6 +79,7 @@ export interface CupLeaderboardRow {
   rank: number;
   user_id: string;
   username: string | null;
+  avatar: string | null;
   balance: string; // Decimal as string
   is_winner: boolean;
   cups_won: number; // lifetime cup wins
@@ -233,6 +235,15 @@ export const bettingApi = createApi({
         }
       },
     }),
+
+    setAvatar: builder.mutation<{ avatar: string }, { avatar: string }>({
+      query: (body) => ({
+        url: "/client/me/avatar",
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["Cup", "User"],
+    }),
   }),
 });
 
@@ -246,4 +257,5 @@ export const {
   useGetCupsQuery,
   useCreateBetMutation,
   useSetUsernameMutation,
+  useSetAvatarMutation,
 } = bettingApi;

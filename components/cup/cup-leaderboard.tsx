@@ -4,6 +4,7 @@ import { Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { formatMoney } from "@/lib/money";
+import { UserAvatar } from "@/components/profile/user-avatar";
 import type { CupLeaderboardRow } from "@/lib/services/betting-api";
 
 interface CupLeaderboardProps {
@@ -38,6 +39,12 @@ export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
                   <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground tabular-nums">
                     {row.rank}
                   </span>
+                  <UserAvatar
+                    avatar={row.avatar}
+                    userId={row.user_id}
+                    username={row.username}
+                    size="sm"
+                  />
                   <span className="truncate font-medium">
                     {row.username ?? "—"}
                     {isSelf && (

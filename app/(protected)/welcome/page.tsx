@@ -3,7 +3,6 @@
 import type React from "react";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,7 +28,6 @@ export default function WelcomePage() {
   const [error, setError] = useState<string | null>(null);
   const [setUsernameMutation, { isLoading }] = useSetUsernameMutation();
   const [setAvatarMutation] = useSetAvatarMutation();
-  const router = useRouter();
 
   const selectedAvatar = avatar ?? (me ? defaultAvatarFor(me.id) : null);
 
@@ -55,9 +53,6 @@ export default function WelcomePage() {
         setError("That username is taken — try another.");
       } else if (status === 422) {
         setError("Use 3–20 letters, numbers or underscores.");
-      } else if (status === 400) {
-        // Already set (e.g. a stale second tab) — nothing to do here, move on.
-        router.replace("/fixtures");
       } else {
         setError("Something went wrong. Please try again.");
       }

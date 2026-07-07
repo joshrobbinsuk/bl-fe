@@ -243,18 +243,6 @@ export const bettingApi = createApi({
         body,
       }),
       invalidatesTags: ["Cup", "User"],
-      async onQueryStarted({ avatar }, { dispatch, queryFulfilled }) {
-        try {
-          await queryFulfilled;
-          dispatch(
-            bettingApi.util.updateQueryData("getMe", undefined, (draft) => {
-              draft.avatar = avatar;
-            }),
-          );
-        } catch {
-          // Failure is surfaced to the caller via unwrap(); nothing to patch.
-        }
-      },
     }),
   }),
 });

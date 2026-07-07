@@ -41,10 +41,6 @@ export function parseAvatar(id: string): ParsedAvatar | null {
   return { icon, colour };
 }
 
-export function isValidAvatar(id: string): boolean {
-  return parseAvatar(id) !== null;
-}
-
 function hashString(value: string): number {
   let hash = 0;
   for (let i = 0; i < value.length; i++) {

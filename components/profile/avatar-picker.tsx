@@ -42,7 +42,9 @@ export function AvatarPicker({ value, onChange }: AvatarPickerProps) {
               "size-8 rounded-full border-2 transition-transform",
               slug === colour
                 ? "border-foreground scale-110"
-                : "border-transparent",
+                : slug === "white"
+                  ? "border-border"
+                  : "border-transparent",
             )}
             style={{ backgroundColor: hex }}
           />

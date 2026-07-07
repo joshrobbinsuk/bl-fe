@@ -24,10 +24,14 @@ export const AVATAR_COLOURS: Record<string, string> = {
   gold: "#f59e0b",
   purple: "#a855f7",
   teal: "#14b8a6",
+  white: "#ffffff",
 };
 
 const ICON_SLUGS = Object.keys(AVATAR_ICONS);
 const COLOUR_SLUGS = Object.keys(AVATAR_COLOURS);
+// White is pickable but excluded from derived defaults: a white fallback disc
+// would render its white initial invisibly.
+const DEFAULT_COLOUR_SLUGS = COLOUR_SLUGS.filter((slug) => slug !== "white");
 
 export interface ParsedAvatar {
   icon: string;
@@ -55,12 +59,14 @@ export function defaultAvatarFor(userId: string): string {
   const hash = hashString(userId);
   const icon = ICON_SLUGS[hash % ICON_SLUGS.length];
   const colour =
-    COLOUR_SLUGS[Math.floor(hash / ICON_SLUGS.length) % COLOUR_SLUGS.length];
+    DEFAULT_COLOUR_SLUGS[
+      Math.floor(hash / ICON_SLUGS.length) % DEFAULT_COLOUR_SLUGS.length
+    ];
   return `${icon}-${colour}`;
 }
 
 /** Disc colour for a user with no avatar chosen yet, deterministic from id. */
 export function fallbackColourFor(userId: string): string {
   const hash = hashString(userId);
-  return AVATAR_COLOURS[COLOUR_SLUGS[hash % COLOUR_SLUGS.length]];
+  return AVATAR_COLOURS[DEFAULT_COLOUR_SLUGS[hash % DEFAULT_COLOUR_SLUGS.length]];
 }

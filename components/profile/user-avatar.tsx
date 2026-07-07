@@ -36,6 +36,7 @@ export function UserAvatar({
     <div
       className={cn(
         "flex shrink-0 items-center justify-center rounded-full font-semibold text-white",
+        parsed?.colour === "white" && "border border-border",
         SIZE_CLASSES[size],
         className,
       )}

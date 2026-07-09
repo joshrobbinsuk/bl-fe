@@ -61,4 +61,4 @@ The conversation STATE (messages/streaming) lives in `PunditChatProvider` (`comp
 
 ## Branches
 
-Default branch `main`. Feature branches: `feature/<slug>`. Deploy is not codified in this repo (no deploy workflow) — almost certainly Vercel via git integration (`@vercel/analytics` is wired in). Confirm before assuming.
+Default branch `main`. Feature branches: `feature/<slug>`. The FE **build** runs on Vercel (git integration; `@vercel/analytics` wired in). Its **production env vars** (`NEXT_PUBLIC_API_URL` → the Cloud Run URL, `NEXT_PUBLIC_AMPLIFY_*` → the Cognito pool/client/region) are **set by the backend's GCP Terraform deploy** (`brokelads_cloud` `terraform/gcp/modules/app/vercel.tf`), which also fires a Vercel deploy hook — so a backend redeploy re-wires *and* rebuilds the FE automatically, with nothing pasted here. Local dev still uses `.env.local` (gitignored).

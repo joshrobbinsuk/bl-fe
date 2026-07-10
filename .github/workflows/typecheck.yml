@@ -3,7 +3,7 @@ name: Lint & Typecheck
 on:
   pull_request:
     branches:
-      - main
+      - dev
 
 jobs:
   typecheck:

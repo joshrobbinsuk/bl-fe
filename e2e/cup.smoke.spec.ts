@@ -6,22 +6,15 @@ test.describe("weekly cup", () => {
     await login(page);
   });
 
-  test("cup leaderboard renders and a bet updates the pot", async ({
+  test("a bet creates the cup and updates the pot and leaderboard", async ({
     page,
   }) => {
-    // Open the cup page and confirm the leaderboard/header rendered.
-    await page.goto("/cup");
-    await expect(
-      page.getByRole("heading", { name: "Cup", exact: true }),
-    ).toBeVisible();
-    await expect(page.getByText("Weekly Cup")).toBeVisible();
-    await expect(page.getByText("Your pot")).toBeVisible();
-
     // Capture the pot pill from the nav before betting.
     const potPill = page.getByTestId("balance-pill").first();
     const potBefore = (await potPill.innerText()).trim();
 
-    // Place a bet on the first available fixture.
+    // Place a bet on the first available fixture. This must come first: on a
+    // fresh stack the week's cup doesn't exist until the first bet creates it.
     await page.goto("/fixtures");
     const placeBet = page.getByRole("button", { name: "Place Bet" }).first();
     await expect(placeBet).toBeVisible();
@@ -40,8 +33,11 @@ test.describe("weekly cup", () => {
       expect(potAfter).not.toEqual(potBefore);
     }).toPass({ timeout: 15_000 });
 
-    // Leaderboard should still render for the current user after the bet.
+    // The bet created this week's cup — the page and leaderboard now render.
     await page.goto("/cup");
+    await expect(
+      page.getByRole("heading", { name: "Weekly Cup" }),
+    ).toBeVisible();
     await expect(page.getByText("(you)")).toBeVisible();
   });
 });

@@ -8,6 +8,8 @@ import {
   getCurrentUser,
   confirmSignUp,
   resendSignUpCode,
+  resetPassword,
+  confirmResetPassword,
 } from "aws-amplify/auth";
 
 export function useAuth() {
@@ -60,6 +62,22 @@ export function useAuth() {
     await resendSignUpCode({ username: email });
   };
 
+  const handleResetPassword = async (email: string) => {
+    return resetPassword({ username: email });
+  };
+
+  const handleConfirmResetPassword = async (
+    email: string,
+    code: string,
+    newPassword: string,
+  ) => {
+    await confirmResetPassword({
+      username: email,
+      confirmationCode: code,
+      newPassword,
+    });
+  };
+
   const handleSignOut = async () => {
     await signOut();
     setUser(null);
@@ -72,6 +90,8 @@ export function useAuth() {
     signUp: handleSignUp,
     confirmSignUp: handleConfirmSignUp,
     resendSignUpCode: handleResendSignUpCode,
+    resetPassword: handleResetPassword,
+    confirmResetPassword: handleConfirmResetPassword,
     signOut: handleSignOut,
   };
 }

@@ -27,7 +27,14 @@ test.describe("weekly cup", () => {
     await page.getByRole("button", { name: "Confirm Bet" }).click();
 
     // Toast confirms placement, then the nav pot should reflect the stake.
-    await expect(page.getByText("Bet Placed")).toBeVisible();
+    // Scope to the toast viewport region — Radix also mounts a visually-hidden
+    // screen-reader announce region with the same text, which would otherwise
+    // trip strict mode.
+    await expect(
+      page
+        .getByRole("region", { name: /notifications/i })
+        .getByText("Bet Placed"),
+    ).toBeVisible();
     await expect(async () => {
       const potAfter = (await potPill.innerText()).trim();
       expect(potAfter).not.toEqual(potBefore);

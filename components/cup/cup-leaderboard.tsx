@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { formatMoney } from "@/lib/money";
 import { UserAvatar } from "@/components/profile/user-avatar";
+import { StreakBadges } from "@/components/cup/streak-badges";
 import type { CupLeaderboardRow } from "@/lib/services/betting-api";
 
 interface CupLeaderboardProps {
@@ -65,6 +66,10 @@ export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
                     </span>
                   )}
                   {row.is_winner && <span aria-label="Winner">🏆</span>}
+                  <StreakBadges
+                    participationStreak={row.participation_streak}
+                    profitStreak={row.profit_streak}
+                  />
                 </div>
                 <span className="font-semibold tabular-nums">
                   {formatMoney(row.balance)}

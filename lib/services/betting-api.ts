@@ -16,6 +16,8 @@ export interface User {
   avatar: string | null; // "<icon>-<colour>", null until chosen
   balance: string; // weekly cup pot, Decimal as string
   cups_won: number;
+  participation_streak: number; // consecutive settled cup weeks
+  profit_streak: number; // consecutive settled weeks ending in profit
   created_at: string;
   updated_at: string;
 }
@@ -83,6 +85,8 @@ export interface CupLeaderboardRow {
   balance: string; // Decimal as string
   is_winner: boolean;
   cups_won: number; // lifetime cup wins
+  participation_streak: number; // consecutive settled cup weeks
+  profit_streak: number; // consecutive settled weeks ending in profit
 }
 
 export interface CupCurrentResponse {

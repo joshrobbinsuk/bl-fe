@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { AvatarPicker } from "@/components/profile/avatar-picker";
 import { UserAvatar } from "@/components/profile/user-avatar";
+import { StreakBadges } from "@/components/cup/streak-badges";
 import { useToast } from "@/hooks/use-toast";
 import {
   useGetMeQuery,
@@ -113,6 +114,10 @@ export default function ProfilePage() {
               <p className="text-sm text-muted-foreground">
                 🏆 {me.cups_won} cup{me.cups_won === 1 ? "" : "s"} won
               </p>
+              <StreakBadges
+                participationStreak={me.participation_streak}
+                profitStreak={me.profit_streak}
+              />
               <p className="text-xs text-muted-foreground">
                 Lad since {ladSince}
               </p>

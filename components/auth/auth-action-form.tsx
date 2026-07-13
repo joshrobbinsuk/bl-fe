@@ -31,7 +31,7 @@ function ErrorCard({ description }: { description: string }) {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Link expired</CardTitle>
+        <CardTitle>Link not valid</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
@@ -47,9 +47,18 @@ export function AuthActionForm() {
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
   const oobCode = searchParams.get("oobCode");
-  const paramsOk = mode === "resetPassword" && !!oobCode;
 
-  const [phase, setPhase] = useState<Phase>(paramsOk ? "verifying" : "invalid");
+  if (mode !== "resetPassword" || !oobCode) {
+    return (
+      <ErrorCard description="This password-reset link is invalid or has expired." />
+    );
+  }
+
+  return <ResetPasswordForm oobCode={oobCode} />;
+}
+
+function ResetPasswordForm({ oobCode }: { oobCode: string }) {
+  const [phase, setPhase] = useState<Phase>("verifying");
   const [accountEmail, setAccountEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -57,14 +66,13 @@ export function AuthActionForm() {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!paramsOk) return;
-    verifyPasswordResetCode(auth, oobCode as string)
+    verifyPasswordResetCode(auth, oobCode)
       .then((email) => {
         setAccountEmail(email);
         setPhase("form");
       })
       .catch(() => setPhase("invalid"));
-  }, [paramsOk, oobCode]);
+  }, [oobCode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,7 +97,7 @@ export function AuthActionForm() {
 
     setLoading(true);
     try {
-      await confirmPasswordReset(auth, oobCode as string, password);
+      await confirmPasswordReset(auth, oobCode, password);
       setPhase("done");
     } catch (error) {
       const expired =

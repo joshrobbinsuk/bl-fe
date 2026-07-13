@@ -6,7 +6,7 @@ Next.js 16 (App Router) + React 19 + TypeScript frontend for the BrokeLads sport
 
 ## Layout
 
-- `app/` — App Router. Route groups: `(auth)/` (login, signup, forgot-password, `auth/action`) wrapped by `AuthRedirect`; `(protected)/` (fixtures, my-bets) wrapped by `RouteGuard`. `app/page.tsx` redirects `/` → `/fixtures`. Root `layout.tsx` mounts the Redux provider and the toaster. `auth/action` is the branded landing page for the password-reset email link (`?mode=resetPassword&oobCode=…`).
+- `app/` — App Router. Route groups: `(auth)/` (login, signup, forgot-password) wrapped by `AuthRedirect`; `(protected)/` (fixtures, my-bets) wrapped by `RouteGuard`. `app/page.tsx` redirects `/` → `/fixtures`. Root `layout.tsx` mounts the Redux provider and the toaster. `app/auth/action/` is the branded landing page for the password-reset email link (`?mode=resetPassword&oobCode=…`) — deliberately **outside** `(auth)` so `AuthRedirect` doesn't bounce a signed-in user off their reset link.
 - `components/` — `auth/` (incl. `google-button.tsx`, `auth-action-form.tsx`), `fixtures/` (incl. `bet-dialog.tsx`), `bets/`, `layout/app-nav.tsx`, `providers/`, and `ui/` (shadcn/ui, new-york style, Radix primitives).
 - `lib/` — `services/betting-api.ts` (RTK Query API slice — the data boundary), `store.ts`, `firebase.ts` (the Firebase app + `auth` export), `utils.ts` (`cn()`).
 - `hooks/` — `use-auth.ts` (Firebase `onAuthStateChanged` + the sign-in/up/out/reset/Google calls), `use-toast.ts`, `use-debounced-value.ts`, `use-mobile.ts`.

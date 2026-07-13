@@ -1,10 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { login } from "./helpers/login";
-import {
-  emulatorReachable,
-  ensureE2eUser,
-  getResetOobCode,
-} from "./helpers/emulator";
+import { emulatorReachable, getResetOobCode } from "./helpers/emulator";
 
 const email = process.env.E2E_TEST_EMAIL;
 const password = process.env.E2E_TEST_PASSWORD;
@@ -16,9 +12,7 @@ test.describe("password reset", () => {
     test.skip(!email || !password, "E2E_TEST_EMAIL / E2E_TEST_PASSWORD not set");
     test.skip(!(await emulatorReachable()), "Auth emulator not reachable");
 
-    await ensureE2eUser(email!, password!);
-
-    // Request the reset from the UI.
+    // Request the reset from the UI (global-setup seeded the user).
     await page.goto("/forgot-password");
     await page.fill("#email", email!);
     await page.getByRole("button", { name: "Send reset link" }).click();

@@ -45,6 +45,7 @@ export async function streamPunditResponse(
   callbacks: PunditStreamCallbacks,
   signal?: AbortSignal,
 ): Promise<void> {
+  await auth.authStateReady();
   const token = await auth.currentUser?.getIdToken();
   if (!token) {
     throw new PunditStreamError("Not authenticated");

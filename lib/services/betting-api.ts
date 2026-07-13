@@ -130,6 +130,10 @@ const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
   prepareHeaders: async (headers) => {
     try {
+      // On a hard reload queries fire before Firebase restores the persisted
+      // session; without this a logged-in user's first getMe goes out with no
+      // Authorization header and caches a 401.
+      await auth.authStateReady();
       const token = await auth.currentUser?.getIdToken();
 
       if (token) {

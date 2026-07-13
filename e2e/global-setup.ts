@@ -1,8 +1,6 @@
-import { config as loadEnv } from "dotenv";
 import { emulatorReachable, ensureE2eUser } from "./helpers/emulator";
 
-loadEnv({ path: ".env.e2e" });
-
+// Creds are in the env already: playwright.config.ts loads .env.e2e.
 // Seed the e2e user into the Auth emulator once per run. Idempotent, and a
 // no-op when the emulator isn't up (the reset spec skips itself in that case).
 export default async function globalSetup() {

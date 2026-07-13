@@ -1,4 +1,4 @@
-import { fetchAuthSession } from "aws-amplify/auth";
+import { auth } from "@/lib/firebase";
 
 export interface PunditTurn {
   role: "user" | "assistant";
@@ -45,8 +45,8 @@ export async function streamPunditResponse(
   callbacks: PunditStreamCallbacks,
   signal?: AbortSignal,
 ): Promise<void> {
-  const session = await fetchAuthSession();
-  const token = session.tokens?.idToken?.toString();
+  await auth.authStateReady();
+  const token = await auth.currentUser?.getIdToken();
   if (!token) {
     throw new PunditStreamError("Not authenticated");
   }

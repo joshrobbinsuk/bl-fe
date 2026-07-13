@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { fetchAuthSession } from "aws-amplify/auth";
+import { auth } from "@/lib/firebase";
 
 export type FixtureResult = "HOME" | "AWAY" | "DRAW";
 export type BetOutcome = "UNDECIDED" | "WON" | "LOST" | "VOIDED";
@@ -10,7 +10,7 @@ export type CupStatus = "OPEN" | "CLOSING" | "SETTLED";
 export interface User {
   id: string;
   status: UserStatus;
-  cognito_uuid: string;
+  auth_uid: string;
   email: string;
   username: string | null; // null until set at the first-run gate
   avatar: string | null; // "<icon>-<colour>", null until chosen
@@ -130,8 +130,11 @@ const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
   prepareHeaders: async (headers) => {
     try {
-      const session = await fetchAuthSession();
-      const token = session.tokens?.idToken?.toString();
+      // On a hard reload queries fire before Firebase restores the persisted
+      // session; without this a logged-in user's first getMe goes out with no
+      // Authorization header and caches a 401.
+      await auth.authStateReady();
+      const token = await auth.currentUser?.getIdToken();
 
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);

@@ -2,7 +2,6 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { AmplifyProvider } from "@/components/providers/amplify-provider";
 import { ReduxProvider } from "@/components/providers/redux-provider";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
@@ -28,12 +27,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans antialiased`}>
-        <AmplifyProvider>
-          <ReduxProvider>
-            {children}
-            <Toaster />
-          </ReduxProvider>
-        </AmplifyProvider>
+        <ReduxProvider>
+          {children}
+          <Toaster />
+        </ReduxProvider>
         <Analytics />
       </body>
     </html>

@@ -4,70 +4,56 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { FirebaseError } from "firebase/app"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { GoogleSignInButton } from "@/components/auth/google-button"
 import { useAuth } from "@/hooks/use-auth"
 import { useToast } from "@/hooks/use-toast"
+
+function loginErrorMessage(code: string): string {
+  switch (code) {
+    case "auth/invalid-credential":
+    case "auth/wrong-password":
+    case "auth/user-not-found":
+      return "Incorrect email or password."
+    case "auth/too-many-requests":
+      return "Too many attempts. Please wait a moment and try again."
+    case "auth/user-disabled":
+      return "This account has been disabled."
+    default:
+      return "Failed to login."
+  }
+}
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
-  const { signIn, signOut, resendSignUpCode } = useAuth()
+  const { signIn } = useAuth()
   const { toast } = useToast()
   const router = useRouter()
-
-  const goConfirm = async () => {
-    // signIn on an unconfirmed user leaves a half-finished sign-in in Amplify's
-    // token store; clear it so the next real sign-in starts from a clean slate.
-    try {
-      await signOut()
-    } catch {
-      // No session to clear is fine.
-    }
-    try {
-      await resendSignUpCode(email)
-    } catch {
-      // Resend can fail (e.g. rate limit); the code screen still lets them retry.
-    }
-    toast({
-      title: "Confirm your email first",
-      description: "We've sent you a fresh confirmation code.",
-    })
-    router.push(`/confirm?email=${encodeURIComponent(email)}`)
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      const result = await signIn(email, password)
-      // Amplify v6 doesn't throw for an unconfirmed user — it returns a
-      // CONFIRM_SIGN_UP next step. Route them into the confirm flow instead of
-      // treating it as a successful login.
-      if (result?.nextStep?.signInStep === "CONFIRM_SIGN_UP") {
-        await goConfirm()
-        return
-      }
+      await signIn(email, password)
       toast({
         title: "Success",
         description: "Logged in successfully",
       })
       router.push("/fixtures")
-    } catch (error: any) {
-      // Older Cognito setups throw instead of returning the next step.
-      if (error.name === "UserNotConfirmedException") {
-        await goConfirm()
-      } else {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to login",
-          variant: "destructive",
-        })
-      }
+    } catch (error) {
+      const code = error instanceof FirebaseError ? error.code : ""
+      toast({
+        title: "Error",
+        description: loginErrorMessage(code),
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
@@ -106,6 +92,12 @@ export function LoginForm() {
             {loading ? "Logging in..." : "Login"}
           </Button>
         </form>
+        <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
+          <span className="h-px flex-1 bg-border" />
+          or
+          <span className="h-px flex-1 bg-border" />
+        </div>
+        <GoogleSignInButton />
       </CardContent>
     </Card>
   )

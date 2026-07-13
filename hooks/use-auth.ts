@@ -2,96 +2,50 @@
 
 import { useState, useEffect } from "react";
 import {
-  signIn,
-  signUp,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  sendPasswordResetEmail,
   signOut,
-  getCurrentUser,
-  confirmSignUp,
-  resendSignUpCode,
-  resetPassword,
-  confirmResetPassword,
-} from "aws-amplify/auth";
+  type User,
+} from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export function useAuth() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const checkUser = async () => {
-    try {
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
-    } catch (error) {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    // Mount-time auth probe: setState happens after an await, which is the
-    // intended pattern here. A full fix means sourcing auth from an external
-    // store (useSyncExternalStore / RTK Query) — out of scope for now.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    checkUser();
+    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+      setUser(nextUser);
+      setLoading(false);
+    });
+    return unsubscribe;
   }, []);
 
-  const handleSignIn = async (email: string, password: string) => {
-    const result = await signIn({ username: email, password });
-    await checkUser();
-    return result;
-  };
+  const handleSignIn = (email: string, password: string) =>
+    signInWithEmailAndPassword(auth, email, password);
 
-  const handleSignUp = async (email: string, password: string) => {
-    const result = await signUp({
-      username: email,
-      password,
-      options: {
-        userAttributes: {
-          email,
-        },
-      },
-    });
-    return result;
-  };
+  const handleSignUp = (email: string, password: string) =>
+    createUserWithEmailAndPassword(auth, email, password);
 
-  const handleConfirmSignUp = async (email: string, code: string) => {
-    await confirmSignUp({ username: email, confirmationCode: code });
-  };
+  const handleSignInWithGoogle = () =>
+    signInWithPopup(auth, new GoogleAuthProvider());
 
-  const handleResendSignUpCode = async (email: string) => {
-    await resendSignUpCode({ username: email });
-  };
+  const handleResetPassword = (email: string) =>
+    sendPasswordResetEmail(auth, email);
 
-  const handleResetPassword = async (email: string) => {
-    return resetPassword({ username: email });
-  };
-
-  const handleConfirmResetPassword = async (
-    email: string,
-    code: string,
-    newPassword: string,
-  ) => {
-    await confirmResetPassword({
-      username: email,
-      confirmationCode: code,
-      newPassword,
-    });
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    setUser(null);
-  };
+  const handleSignOut = () => signOut(auth);
 
   return {
     user,
     loading,
     signIn: handleSignIn,
     signUp: handleSignUp,
-    confirmSignUp: handleConfirmSignUp,
-    resendSignUpCode: handleResendSignUpCode,
+    signInWithGoogle: handleSignInWithGoogle,
     resetPassword: handleResetPassword,
-    confirmResetPassword: handleConfirmResetPassword,
     signOut: handleSignOut,
   };
 }

@@ -1,8 +1,8 @@
 import { expect, type Page } from "@playwright/test";
 
 /**
- * Log in through the real Cognito-backed form. Reads creds from the
- * environment (loaded from .env.e2e by playwright.config.ts).
+ * Log in through the email+password form (Firebase Auth emulator locally).
+ * Reads creds from the environment (loaded from .env.e2e by playwright.config.ts).
  */
 export async function login(page: Page): Promise<void> {
   const email = process.env.E2E_TEST_EMAIL;

@@ -16,9 +16,8 @@ test.describe("password reset", () => {
     await page.goto("/forgot-password");
     await page.fill("#email", email!);
     await page.getByRole("button", { name: "Send reset link" }).click();
-    await expect(
-      page.getByRole("heading", { name: "Check your email" }),
-    ).toBeVisible();
+    // CardTitle renders a div, not a heading — match on text.
+    await expect(page.getByText("Check your email")).toBeVisible();
 
     // Pull the oobCode straight from the emulator — no real email involved.
     let oobCode: string | null = null;
@@ -35,9 +34,7 @@ test.describe("password reset", () => {
     await page.fill("#password", password!);
     await page.fill("#confirmPassword", password!);
     await page.getByRole("button", { name: "Reset password" }).click();
-    await expect(
-      page.getByRole("heading", { name: "Password reset" }),
-    ).toBeVisible();
+    await expect(page.getByText("Password reset", { exact: true })).toBeVisible();
 
     // Log back in with the (unchanged) password.
     await login(page);

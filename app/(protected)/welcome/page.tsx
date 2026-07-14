@@ -15,21 +15,21 @@ import {
 } from "@/components/ui/card";
 import {
   useGetMeQuery,
-  useSetAvatarMutation,
+  useSetShirtMutation,
   useSetUsernameMutation,
 } from "@/lib/services/betting-api";
-import { defaultAvatarFor } from "@/lib/avatars";
-import { AvatarPicker } from "@/components/profile/avatar-picker";
+import { defaultShirtFor, type Shirt } from "@/lib/shirts";
+import { ShirtPicker } from "@/components/profile/shirt-picker";
 
 export default function WelcomePage() {
   const { data: me } = useGetMeQuery();
   const [username, setUsername] = useState("");
-  const [avatar, setAvatar] = useState<string | null>(null);
+  const [shirt, setShirt] = useState<Shirt | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [setUsernameMutation, { isLoading }] = useSetUsernameMutation();
-  const [setAvatarMutation] = useSetAvatarMutation();
+  const [setShirtMutation] = useSetShirtMutation();
 
-  const selectedAvatar = avatar ?? (me ? defaultAvatarFor(me.id) : null);
+  const selectedShirt = shirt ?? (me ? defaultShirtFor(me.id) : null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,12 +37,12 @@ export default function WelcomePage() {
 
     try {
       await setUsernameMutation({ username }).unwrap();
-      if (selectedAvatar) {
+      if (selectedShirt) {
         try {
-          await setAvatarMutation({ avatar: selectedAvatar }).unwrap();
+          await setShirtMutation(selectedShirt).unwrap();
         } catch {
-          // Avatar failure after a successful username set is fine — the
-          // user just keeps the fallback disc until they try again.
+          // Shirt failure after a successful username set is fine — the user
+          // just keeps the fallback disc until they try again.
         }
       }
       // UsernameGate owns the redirect: the mutation patches getMe, so the gate
@@ -71,9 +71,8 @@ export default function WelcomePage() {
           <CardHeader>
             <CardTitle>Welcome to BrokeLads</CardTitle>
             <CardDescription>
-              A weekly betting cup. Everyone gets $1,000 of play money each week
-              and the biggest balance by Monday wins. First — pick a username.
-              It&apos;s how you&apos;ll show up on the leaderboard.
+              Pick a username and a shirt. They&apos;re how you&apos;ll show up
+              on the leaderboard.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -94,13 +93,10 @@ export default function WelcomePage() {
                 </p>
                 {error && <p className="text-sm text-destructive">{error}</p>}
               </div>
-              {selectedAvatar && (
+              {selectedShirt && (
                 <div className="space-y-2">
-                  <Label>Avatar</Label>
-                  <AvatarPicker
-                    value={selectedAvatar}
-                    onChange={setAvatar}
-                  />
+                  <Label>Your shirt</Label>
+                  <ShirtPicker value={selectedShirt} onChange={setShirt} />
                 </div>
               )}
               <Button type="submit" className="w-full" disabled={isLoading}>

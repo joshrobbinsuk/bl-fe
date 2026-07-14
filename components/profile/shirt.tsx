@@ -6,11 +6,12 @@ type ShirtSize = "sm" | "md" | "lg";
 
 const SIZE_PX: Record<ShirtSize, number> = { sm: 24, md: 32, lg: 64 };
 
-// Short-sleeve kit silhouette in a 0 0 64 64 box: sleeves splaying from the
-// shoulders, a body tapering to the hem, a scooped collar. Drawn once; the
-// disc sits behind it and every pattern/motif clips to it.
+// Short-sleeve kit silhouette in a 0 0 64 64 box: flat top edge between
+// rounded shoulders, sleeves splaying down with rounded tips and cuffs, soft
+// hem corners. Drawn once; the disc sits behind it and every pattern/motif
+// clips to it.
 const SILHOUETTE =
-  "M 16 18 L 8 24 L 12 36 L 20 32 L 20 50 L 44 50 L 44 32 L 52 36 L 56 24 L 48 18 L 39 21 Q 32 26 25 21 Z";
+  "M 23 16 L 41 16 Q 46 16 49 19 L 55 26 Q 57 28 56 30 L 51 36 Q 49 38 47 37 L 44 34 L 44 48 Q 44 50 42 50 L 22 50 Q 20 50 20 48 L 20 34 L 17 37 Q 15 38 13 36 L 8 30 Q 7 28 9 26 L 15 19 Q 18 16 23 16 Z";
 
 // Each pattern is a self-contained fragment painted in `pattern_colour` and
 // clipped to the silhouette by the caller. Adding a pattern = one case here +

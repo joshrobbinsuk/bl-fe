@@ -14,24 +14,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AvatarPicker } from "@/components/profile/avatar-picker";
-import { UserAvatar } from "@/components/profile/user-avatar";
+import { ShirtPicker } from "@/components/profile/shirt-picker";
+import { UserShirt } from "@/components/profile/user-shirt";
 import { StreakBadges } from "@/components/cup/streak-badges";
 import { useToast } from "@/hooks/use-toast";
 import {
   useGetMeQuery,
-  useSetAvatarMutation,
+  useSetShirtMutation,
   useSetUsernameMutation,
 } from "@/lib/services/betting-api";
-import { defaultAvatarFor } from "@/lib/avatars";
+import { defaultShirtFor, type Shirt } from "@/lib/shirts";
 
 export default function ProfilePage() {
   const { data: me, isLoading } = useGetMeQuery();
   const { toast } = useToast();
 
-  const [avatar, setAvatar] = useState<string | null>(null);
-  const [setAvatarMutation, { isLoading: isSavingAvatar }] =
-    useSetAvatarMutation();
+  const [shirt, setShirt] = useState<Shirt | null>(null);
+  const [setShirtMutation, { isLoading: isSavingShirt }] =
+    useSetShirtMutation();
 
   const [username, setUsername] = useState<string | null>(null);
   const [usernameError, setUsernameError] = useState<string | null>(null);
@@ -49,20 +49,20 @@ export default function ProfilePage() {
     );
   }
 
-  const selectedAvatar = avatar ?? me.avatar ?? defaultAvatarFor(me.id);
+  const selectedShirt = shirt ?? me.shirt ?? defaultShirtFor(me.id);
   const usernameValue = username ?? me.username ?? "";
   const ladSince = new Date(me.created_at).toLocaleDateString(undefined, {
     month: "long",
     year: "numeric",
   });
 
-  const handleSaveAvatar = async () => {
+  const handleSaveShirt = async () => {
     try {
-      await setAvatarMutation({ avatar: selectedAvatar }).unwrap();
-      toast({ title: "Avatar updated" });
+      await setShirtMutation(selectedShirt).unwrap();
+      toast({ title: "Shirt updated" });
     } catch {
       toast({
-        title: "Couldn't save avatar",
+        title: "Couldn't save shirt",
         description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
@@ -102,8 +102,8 @@ export default function ProfilePage() {
 
         <Card>
           <CardContent className="flex items-center gap-4">
-            <UserAvatar
-              avatar={me.avatar}
+            <UserShirt
+              shirt={me.shirt}
               userId={me.id}
               username={me.username}
               size="lg"
@@ -127,13 +127,13 @@ export default function ProfilePage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Avatar</CardTitle>
-            <CardDescription>Pick an icon and colour.</CardDescription>
+            <CardTitle>Shirt</CardTitle>
+            <CardDescription>Compose your kit.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <AvatarPicker value={selectedAvatar} onChange={setAvatar} />
-            <Button onClick={handleSaveAvatar} disabled={isSavingAvatar}>
-              {isSavingAvatar ? "Saving..." : "Save"}
+            <ShirtPicker value={selectedShirt} onChange={setShirt} />
+            <Button onClick={handleSaveShirt} disabled={isSavingShirt}>
+              {isSavingShirt ? "Saving..." : "Save"}
             </Button>
           </CardContent>
         </Card>

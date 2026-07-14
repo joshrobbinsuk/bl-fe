@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { UserAvatar } from "@/components/profile/user-avatar";
+import { UserShirt } from "@/components/profile/user-shirt";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useGetMeQuery } from "@/lib/services/betting-api";
@@ -117,8 +117,8 @@ export function AppNav() {
                 aria-label="Account menu"
                 className="flex items-center gap-1 rounded-full outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
               >
-                <UserAvatar
-                  avatar={me?.avatar ?? null}
+                <UserShirt
+                  shirt={me?.shirt ?? null}
                   userId={me?.id ?? ""}
                   username={me?.username ?? null}
                 />

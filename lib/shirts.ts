@@ -1,16 +1,29 @@
 // Shirt dimension sets — the FE rendering/picker source of truth. Kept in
 // lockstep with the BE validation sets in `api/src/settings.py`: adding a
-// colour/pattern/motif is one entry here + one there (+ an SVG fragment in
+// colour/pattern is one entry here + one there (+ an SVG fragment in
 // components/profile/shirt.tsx for a new pattern). Nothing else hardcodes
-// set members.
+// set members. Colours stay in one pastel tone (Tailwind -300) so any
+// background/body/pattern combination reads harmoniously at disc size.
 
 export const SHIRT_COLOURS: Record<string, string> = {
   red: "#fca5a5",
-  blue: "#93c5fd",
-  green: "#86efac",
+  orange: "#fdba74",
   gold: "#fcd34d",
-  purple: "#d8b4fe",
+  yellow: "#fde047",
+  lime: "#bef264",
+  green: "#86efac",
+  emerald: "#6ee7b7",
   teal: "#5eead4",
+  cyan: "#67e8f9",
+  sky: "#7dd3fc",
+  blue: "#93c5fd",
+  indigo: "#a5b4fc",
+  violet: "#c4b5fd",
+  purple: "#d8b4fe",
+  fuchsia: "#f0abfc",
+  pink: "#f9a8d4",
+  rose: "#fda4af",
+  slate: "#cbd5e1",
   white: "#ffffff",
 };
 
@@ -20,33 +33,16 @@ export const SHIRT_PATTERNS = [
   "hoops",
   "sash",
   "halves",
+  "quarters",
+  "chevron",
+  "band",
 ] as const;
-
-export const SHIRT_MOTIFS: Record<string, string> = {
-  ball: "⚽",
-  fox: "🦊",
-  goat: "🐐",
-  beer: "🍺",
-  fire: "🔥",
-  huff: "😤",
-  tophat: "🎩",
-  crown: "👑",
-  lion: "🦁",
-  dog: "🐶",
-  frog: "🐸",
-  cold: "🥶",
-  chicken: "🍗",
-  dart: "🎯",
-  glove: "🧤",
-  rocket: "🚀",
-};
 
 export interface Shirt {
   background: string;
   body: string;
   pattern: string;
   pattern_colour: string;
-  motif: string | null;
 }
 
 const COLOUR_SLUGS = Object.keys(SHIRT_COLOURS);
@@ -67,7 +63,7 @@ function pick<T>(arr: readonly T[], hash: number): T {
 }
 
 /** Deterministic shirt for the welcome-page preselect — same user id always
- * lands on the same kit. No motif; white excluded from disc/body. */
+ * lands on the same kit. White excluded from disc/body. */
 export function defaultShirtFor(userId: string): Shirt {
   const body = pick(DEFAULT_COLOUR_SLUGS, hashString(userId + ":body"));
   const patternColour = pick(COLOUR_SLUGS, hashString(userId + ":pattern_colour"));
@@ -83,7 +79,6 @@ export function defaultShirtFor(userId: string): Shirt {
     body,
     pattern: pick(SHIRT_PATTERNS, hashString(userId + ":pattern")),
     pattern_colour: patternColour === body ? "white" : patternColour,
-    motif: null,
   };
 }
 

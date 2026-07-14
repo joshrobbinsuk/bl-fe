@@ -71,9 +71,8 @@ export default function WelcomePage() {
           <CardHeader>
             <CardTitle>Welcome to BrokeLads</CardTitle>
             <CardDescription>
-              A weekly betting cup. Everyone gets $1,000 of play money each week
-              and the biggest balance by Monday wins. First — pick a username.
-              It&apos;s how you&apos;ll show up on the leaderboard.
+              Pick a username and a shirt. They&apos;re how you&apos;ll show up
+              on the leaderboard.
             </CardDescription>
           </CardHeader>
           <CardContent>

@@ -1,12 +1,21 @@
-import { Ban } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { SHIRT_COLOURS, SHIRT_MOTIFS, SHIRT_PATTERNS, type Shirt } from "@/lib/shirts";
+import { SHIRT_COLOURS, SHIRT_PATTERNS, type Shirt } from "@/lib/shirts";
 import { ShirtGraphic } from "@/components/profile/shirt";
 
 interface ShirtPickerProps {
   value: Shirt;
   onChange: (shirt: Shirt) => void;
 }
+
+// The three shirt slots that share one colour palette. The toggle picks which
+// one the palette below edits, so we show one swatch grid instead of three.
+type ColourSlot = "background" | "body" | "pattern_colour";
+const COLOUR_SLOTS: { slot: ColourSlot; label: string }[] = [
+  { slot: "background", label: "Background" },
+  { slot: "body", label: "Body" },
+  { slot: "pattern_colour", label: "Pattern" },
+];
 
 function SwatchRow({
   selected,
@@ -16,7 +25,7 @@ function SwatchRow({
   onSelect: (slug: string) => void;
 }) {
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       {Object.entries(SHIRT_COLOURS).map(([slug, hex]) => (
         <button
           key={slug}
@@ -56,6 +65,7 @@ function Section({
 
 export function ShirtPicker({ value, onChange }: ShirtPickerProps) {
   const set = (patch: Partial<Shirt>) => onChange({ ...value, ...patch });
+  const [activeSlot, setActiveSlot] = useState<ColourSlot>("background");
 
   return (
     <div className="space-y-4">
@@ -63,19 +73,40 @@ export function ShirtPicker({ value, onChange }: ShirtPickerProps) {
         <ShirtGraphic shirt={value} size="lg" />
       </div>
 
-      <Section label="Background">
+      <Section label="Colour">
+        <div className="flex gap-1 rounded-lg bg-muted p-1">
+          {COLOUR_SLOTS.map(({ slot, label }) => (
+            <button
+              key={slot}
+              type="button"
+              onClick={() => setActiveSlot(slot)}
+              aria-pressed={slot === activeSlot}
+              className={cn(
+                "flex flex-1 items-center justify-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+                slot === activeSlot
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <span
+                className={cn(
+                  "size-3 shrink-0 rounded-full border",
+                  value[slot] === "white" ? "border-border" : "border-transparent",
+                )}
+                style={{ backgroundColor: SHIRT_COLOURS[value[slot]] }}
+              />
+              {label}
+            </button>
+          ))}
+        </div>
         <SwatchRow
-          selected={value.background}
-          onSelect={(background) => set({ background })}
+          selected={value[activeSlot]}
+          onSelect={(colour) => set({ [activeSlot]: colour })}
         />
       </Section>
 
-      <Section label="Body">
-        <SwatchRow selected={value.body} onSelect={(body) => set({ body })} />
-      </Section>
-
-      <Section label="Pattern">
-        <div className="flex gap-2">
+      <Section label="Design">
+        <div className="flex flex-wrap gap-2">
           {SHIRT_PATTERNS.map((pattern) => (
             <button
               key={pattern}
@@ -88,46 +119,7 @@ export function ShirtPicker({ value, onChange }: ShirtPickerProps) {
                 pattern === value.pattern && "border-primary bg-accent",
               )}
             >
-              <ShirtGraphic shirt={{ ...value, pattern, motif: null }} size="sm" />
-            </button>
-          ))}
-        </div>
-      </Section>
-
-      <Section label="Pattern colour">
-        <SwatchRow
-          selected={value.pattern_colour}
-          onSelect={(pattern_colour) => set({ pattern_colour })}
-        />
-      </Section>
-
-      <Section label="Motif">
-        <div className="grid grid-cols-8 gap-2">
-          <button
-            type="button"
-            onClick={() => set({ motif: null })}
-            aria-pressed={value.motif === null}
-            aria-label="No motif"
-            className={cn(
-              "flex aspect-square items-center justify-center rounded-md border text-muted-foreground transition-colors hover:bg-accent",
-              value.motif === null && "border-primary bg-accent",
-            )}
-          >
-            <Ban className="size-4" />
-          </button>
-          {Object.entries(SHIRT_MOTIFS).map(([slug, emoji]) => (
-            <button
-              key={slug}
-              type="button"
-              onClick={() => set({ motif: slug })}
-              aria-pressed={slug === value.motif}
-              aria-label={slug}
-              className={cn(
-                "flex aspect-square items-center justify-center rounded-md border text-xl transition-colors hover:bg-accent",
-                slug === value.motif && "border-primary bg-accent",
-              )}
-            >
-              {emoji}
+              <ShirtGraphic shirt={{ ...value, pattern }} size="sm" />
             </button>
           ))}
         </div>

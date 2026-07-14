@@ -112,7 +112,7 @@ export function AppNav() {
                 {isUserLoading ? "Loading..." : balanceLabel}
               </span>
             </div>
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger
                 aria-label="Account menu"
                 className="flex items-center gap-1 rounded-full outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"

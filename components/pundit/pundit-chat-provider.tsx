@@ -29,6 +29,7 @@ function buildGreeting(username: string | null): PunditTurn {
 interface PunditChatContextValue {
   messages: PunditTurn[];
   streaming: boolean;
+  status: "searching" | "thinking" | null;
   streamingContent: string;
   send: (text: string, fixtureIds: string[]) => void;
   abort: () => void;
@@ -53,6 +54,7 @@ export function PunditChatProvider({
     [username, turns],
   );
   const [streaming, setStreaming] = useState(false);
+  const [status, setStatus] = useState<"searching" | "thinking" | null>(null);
   const [streamingContent, setStreamingContent] = useState("");
   const { toast } = useToast();
   const bufferRef = useRef("");
@@ -83,6 +85,7 @@ export function PunditChatProvider({
       const conversation = [...messages, userTurn];
       setTurns((prev) => [...prev, userTurn]);
       setStreaming(true);
+      setStatus(null);
       setStreamingContent("");
       bufferRef.current = "";
 
@@ -105,6 +108,10 @@ export function PunditChatProvider({
         fixtureIds,
         conversation,
         {
+          onStatus: (status) => {
+            if (status === "searching" || status === "thinking")
+              setStatus(status);
+          },
           onDelta: (delta) => {
             bufferRef.current += delta;
             setStreamingContent(bufferRef.current);
@@ -136,6 +143,7 @@ export function PunditChatProvider({
             setTurns((prev) => [...prev, { role: "assistant", content: reply }]);
           }
           setStreamingContent("");
+          setStatus(null);
           setStreaming(false);
         });
     },
@@ -144,7 +152,7 @@ export function PunditChatProvider({
 
   return (
     <PunditChatContext.Provider
-      value={{ messages, streaming, streamingContent, send, abort }}
+      value={{ messages, streaming, status, streamingContent, send, abort }}
     >
       {children}
     </PunditChatContext.Provider>

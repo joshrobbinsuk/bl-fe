@@ -7,6 +7,8 @@ export interface PunditTurn {
 
 export interface PunditStreamCallbacks {
   onStart?: (model: string) => void;
+  /** Backend progress signal while the model works, e.g. "searching". */
+  onStatus?: (status: string) => void;
   onDelta: (delta: string) => void;
   onComplete?: (content: string) => void;
   onError: (message: string) => void;
@@ -94,6 +96,10 @@ export async function streamPunditResponse(
     switch (frame.event) {
       case "message_start":
         callbacks.onStart?.(String(payload.model ?? ""));
+        return false;
+      case "status":
+        if (typeof payload.status === "string")
+          callbacks.onStatus?.(payload.status);
         return false;
       case "message_delta":
         if (typeof payload.delta === "string") callbacks.onDelta(payload.delta);

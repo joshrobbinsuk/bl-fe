@@ -37,7 +37,7 @@ npm run build        # next build
 - Path alias `@/*` → repo root (`tsconfig.json`). Import as `@/components/...`, `@/lib/...`.
 - `next.config.mjs` sets `typescript.ignoreBuildErrors: true` — **builds won't fail on type errors**. Always run `npm run typecheck` yourself before considering a change done; the build won't catch it. `images.unoptimized: true` too.
 - `npm run lint` works (eslint 9 flat config in `eslint.config.mjs`, extending `eslint-config-next`) and gates CI alongside typecheck. Note `eslint-config-next` 16 ships a native flat config — spread its default export; do **not** wrap it in `FlatCompat` (circular-JSON crash). react-hooks v7 rules are strict (React Compiler); `useAuth`'s mount-time fetch carries one inline `eslint-disable` with a reason — prefer fixing at the source over muting the rule.
-- No test framework at all (no Jest/Vitest/Playwright). Verify changes by running the app.
+- No unit test framework. Playwright smoke specs live in `e2e/` (`npm run test:e2e`, needs the local stack + auth emulator); beyond those, verify changes by running the app.
 - Tailwind v4 (CSS-first config in `app/globals.css`, OKLch theme vars). No `tailwind.config.js`.
 - shadcn components in `components/ui/` are generated — extend via `components.json` / the CLI rather than hand-editing where possible.
 - Firebase config reads `NEXT_PUBLIC_FIREBASE_*` in `lib/firebase.ts`. When `NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST` is set the SDK connects to the local Auth emulator (fake tokens, seedable, no real emails); it's set only in `.env.local`, never in cloud.

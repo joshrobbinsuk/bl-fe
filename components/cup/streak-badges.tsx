@@ -14,7 +14,7 @@ export function StreakBadges({
       {participationStreak > 0 && (
         <span
           className="flex items-center gap-0.5"
-          title={`${participationStreak}-week entry streak`}
+          title={`${participationStreak}-week active streak`}
         >
           <span aria-hidden>🔥</span>
           {participationStreak}

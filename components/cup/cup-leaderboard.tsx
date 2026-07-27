@@ -1,6 +1,5 @@
 "use client";
 
-import { Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { formatMoney } from "@/lib/money";
@@ -63,7 +62,7 @@ export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
                         row.cups_won === 1 ? "win" : "wins"
                       }`}
                     >
-                      <Trophy className="h-3 w-3" />
+                      <span aria-hidden>🏆</span>
                       {row.cups_won}
                     </span>
                   )}

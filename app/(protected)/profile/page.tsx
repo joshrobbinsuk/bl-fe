@@ -19,7 +19,6 @@ import {
   useGetMeQuery,
   useSetUsernameMutation,
 } from "@/lib/services/betting-api";
-import { formatMoney } from "@/lib/money";
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
@@ -92,14 +91,13 @@ export default function ProfilePage() {
               {me.email} · lad since {ladSince}
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Stat label="Pot" value={formatMoney(me.balance)} />
-            <Stat label="Cups won" value={String(me.cups_won)} />
+          <CardContent className="grid grid-cols-3 gap-3">
+            <Stat label="🏆 Cups won" value={String(me.cups_won)} />
             <Stat
-              label="Weeks on the bounce"
+              label="🔥 Active streak"
               value={String(me.participation_streak)}
             />
-            <Stat label="Weeks in profit" value={String(me.profit_streak)} />
+            <Stat label="💰 Profit streak" value={String(me.profit_streak)} />
           </CardContent>
         </Card>
 

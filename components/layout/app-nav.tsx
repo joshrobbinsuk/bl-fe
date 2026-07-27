@@ -122,7 +122,7 @@ export function AppNav() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/profile">Edit profile</Link>
+                  <Link href="/profile">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleSignOut()}>
                   <LogOut className="h-4 w-4" />

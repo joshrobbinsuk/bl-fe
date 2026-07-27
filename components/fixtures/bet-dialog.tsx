@@ -19,6 +19,7 @@ import {
   type FixtureResult,
   useCreateBetMutation,
 } from "@/lib/services/betting-api";
+import { parseApiError } from "@/lib/services/api-error";
 import { useToast } from "@/hooks/use-toast";
 import { formatMoney } from "@/lib/money";
 
@@ -74,18 +75,19 @@ export function BetDialog({ fixture, open, onOpenChange }: BetDialogProps) {
       onOpenChange(false);
       setStake("");
       setChoice("HOME");
-    } catch (error: any) {
+    } catch (error) {
       // The backend's own rejection text is shown as-is, bar the one case
-      // that's really a microcopy moment rather than a diagnostic. A 422 sends
-      // `detail` as an array of field errors, which is no use to a punter.
-      const detail =
-        typeof error.data?.detail === "string" ? error.data.detail : null;
+      // that's really a microcopy moment rather than a diagnostic. Backends
+      // without error codes yet are matched on their prose instead.
+      const { code, message } = parseApiError(error);
+      const skint = code
+        ? code === "INSUFFICIENT_FUNDS"
+        : message === "Insufficient funds";
       toast({
         title: "No dice",
-        description:
-          detail === "Insufficient funds"
-            ? "You're skint, son."
-            : detail ?? "Couldn't get that bet on.",
+        description: skint
+          ? "You're skint, son."
+          : message ?? "Couldn't get that bet on.",
         variant: "destructive",
       });
     }

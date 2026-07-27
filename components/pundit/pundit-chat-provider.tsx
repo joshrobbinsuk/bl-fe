@@ -29,7 +29,7 @@ function buildGreeting(username: string | null): PunditTurn {
 interface PunditChatContextValue {
   messages: PunditTurn[];
   streaming: boolean;
-  searching: boolean;
+  status: "searching" | "thinking" | null;
   streamingContent: string;
   send: (text: string, fixtureIds: string[]) => void;
   abort: () => void;
@@ -54,7 +54,7 @@ export function PunditChatProvider({
     [username, turns],
   );
   const [streaming, setStreaming] = useState(false);
-  const [searching, setSearching] = useState(false);
+  const [status, setStatus] = useState<"searching" | "thinking" | null>(null);
   const [streamingContent, setStreamingContent] = useState("");
   const { toast } = useToast();
   const bufferRef = useRef("");
@@ -85,7 +85,7 @@ export function PunditChatProvider({
       const conversation = [...messages, userTurn];
       setTurns((prev) => [...prev, userTurn]);
       setStreaming(true);
-      setSearching(false);
+      setStatus(null);
       setStreamingContent("");
       bufferRef.current = "";
 
@@ -109,8 +109,8 @@ export function PunditChatProvider({
         conversation,
         {
           onStatus: (status) => {
-            if (status === "searching") setSearching(true);
-            else if (status === "thinking") setSearching(false);
+            if (status === "searching" || status === "thinking")
+              setStatus(status);
           },
           onDelta: (delta) => {
             bufferRef.current += delta;
@@ -143,7 +143,7 @@ export function PunditChatProvider({
             setTurns((prev) => [...prev, { role: "assistant", content: reply }]);
           }
           setStreamingContent("");
-          setSearching(false);
+          setStatus(null);
           setStreaming(false);
         });
     },
@@ -152,7 +152,7 @@ export function PunditChatProvider({
 
   return (
     <PunditChatContext.Provider
-      value={{ messages, streaming, searching, streamingContent, send, abort }}
+      value={{ messages, streaming, status, streamingContent, send, abort }}
     >
       {children}
     </PunditChatContext.Provider>

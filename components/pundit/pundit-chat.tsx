@@ -13,33 +13,35 @@ interface PunditChatProps {
   fixtureIds: string[];
 }
 
-const STAGED_STATUS = [
-  "Checking the fixtures…",
-  "Having a think…",
-  "Nearly there, son…",
-];
+const STAGED_STATUS = ["Checking the fixtures…", "Having a think…"];
 const SEARCH_STATUS = "Scouring the web, son…";
+const THINKING_STATUS = "Nearly there, son…";
 const STAGE_INTERVAL_MS = 1800;
 
 /**
  * Mounted only while a reply is pending with nothing streamed yet, so the first
- * delta unmounts it and the stage resets for the next question. A live web
- * search takes over the line and pauses the rotation, so the timed stages —
- * the fallback when nothing is searching — resume where they left off.
+ * delta unmounts it and the stage resets for the next question. The timed
+ * stages only guess until a real status arrives off the wire; after that the
+ * line is phase-accurate — searching, then "nearly there" once the search is
+ * done — and never falls back to guessing.
  */
-function StagedStatus({ searching }: { searching: boolean }) {
+function StagedStatus({ status }: { status: "searching" | "thinking" | null }) {
   const [stage, setStage] = useState(0);
 
   useEffect(() => {
-    if (searching || stage === STAGED_STATUS.length - 1) return;
+    if (status !== null || stage === STAGED_STATUS.length - 1) return;
     const id = setTimeout(() => setStage(stage + 1), STAGE_INTERVAL_MS);
     return () => clearTimeout(id);
-  }, [searching, stage]);
+  }, [status, stage]);
 
   return (
     <span className="inline-flex items-center gap-2 text-muted-foreground">
       <Spinner className="size-3" />
-      {searching ? SEARCH_STATUS : STAGED_STATUS[stage]}
+      {status === "searching"
+        ? SEARCH_STATUS
+        : status === "thinking"
+        ? THINKING_STATUS
+        : STAGED_STATUS[stage]}
     </span>
   );
 }
@@ -70,7 +72,7 @@ function Bubble({
 }
 
 export function PunditChat({ fixtureIds }: PunditChatProps) {
-  const { messages, streaming, searching, streamingContent, send } =
+  const { messages, streaming, status, streamingContent, send } =
     usePunditChat();
   const [draft, setDraft] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -96,7 +98,7 @@ export function PunditChat({ fixtureIds }: PunditChatProps) {
 
         {streaming && (
           <Bubble role="assistant">
-            {streamingContent || <StagedStatus searching={searching} />}
+            {streamingContent || <StagedStatus status={status} />}
           </Bubble>
         )}
       </div>

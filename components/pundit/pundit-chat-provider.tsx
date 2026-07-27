@@ -110,6 +110,7 @@ export function PunditChatProvider({
         {
           onStatus: (status) => {
             if (status === "searching") setSearching(true);
+            else if (status === "thinking") setSearching(false);
           },
           onDelta: (delta) => {
             bufferRef.current += delta;

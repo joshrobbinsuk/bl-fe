@@ -24,16 +24,17 @@ const STAGE_INTERVAL_MS = 1800;
 /**
  * Mounted only while a reply is pending with nothing streamed yet, so the first
  * delta unmounts it and the stage resets for the next question. A live web
- * search takes over the line; the timed stages are the fallback without one.
+ * search takes over the line and pauses the rotation, so the timed stages —
+ * the fallback when nothing is searching — resume where they left off.
  */
 function StagedStatus({ searching }: { searching: boolean }) {
   const [stage, setStage] = useState(0);
 
   useEffect(() => {
-    if (stage === STAGED_STATUS.length - 1) return;
+    if (searching || stage === STAGED_STATUS.length - 1) return;
     const id = setTimeout(() => setStage(stage + 1), STAGE_INTERVAL_MS);
     return () => clearTimeout(id);
-  }, [stage]);
+  }, [searching, stage]);
 
   return (
     <span className="inline-flex items-center gap-2 text-muted-foreground">

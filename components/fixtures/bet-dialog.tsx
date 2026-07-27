@@ -34,9 +34,11 @@ export function BetDialog({ fixture, open, onOpenChange }: BetDialogProps) {
   const [createBet, { isLoading }] = useCreateBetMutation();
   const { toast } = useToast();
 
-  const calculatePotentialReturn = () => {
+  // Decimal odds: stake * odds is the TOTAL return (stake included), matching
+  // backend settlement. Profit is what "winning" adds on top.
+  const potentialPayout = () => {
     const stakeNum = Number.parseFloat(stake);
-    if (isNaN(stakeNum)) return "0.00";
+    if (isNaN(stakeNum)) return { returns: "0.00", profit: "0.00" };
 
     const oddsStr =
       choice === "HOME"
@@ -45,10 +47,13 @@ export function BetDialog({ fixture, open, onOpenChange }: BetDialogProps) {
         ? fixture.away_odds
         : fixture.draw_odds;
 
-    if (!oddsStr) return "0.00";
+    if (!oddsStr) return { returns: "0.00", profit: "0.00" };
 
     const odds = Number.parseFloat(oddsStr);
-    return (stakeNum * odds).toFixed(2);
+    return {
+      returns: (stakeNum * odds).toFixed(2),
+      profit: (stakeNum * (odds - 1)).toFixed(2),
+    };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -164,10 +169,13 @@ export function BetDialog({ fixture, open, onOpenChange }: BetDialogProps) {
           {stake && Number.parseFloat(stake) > 0 && (
             <div className="p-4 bg-accent rounded-lg space-y-1">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">You could win</span>
+                <span className="text-muted-foreground">Returns</span>
                 <span className="font-semibold tabular-nums">
-                  {formatMoney(calculatePotentialReturn())}
+                  {formatMoney(potentialPayout().returns)}
                 </span>
+              </div>
+              <div className="text-right text-xs text-muted-foreground tabular-nums">
+                ({formatMoney(potentialPayout().profit)} profit)
               </div>
             </div>
           )}

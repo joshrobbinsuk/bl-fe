@@ -19,7 +19,8 @@
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.955 0.02 28);
   --accent-foreground: oklch(0.4 0.16 28);
-  --destructive: oklch(0.577 0.245 27.325);
+  /* Held well clear of --primary so an error never reads as brand chrome. */
+  --destructive: oklch(0.45 0.19 29);
   --destructive-foreground: oklch(0.985 0 0);
   --success: oklch(0.62 0.17 149);
   --success-foreground: oklch(0.985 0 0);
@@ -42,7 +43,6 @@
 @theme inline {
   --font-sans: "Geist", "Geist Fallback";
   --font-mono: "Geist Mono", "Geist Mono Fallback";
-  --default-transition-duration: 150ms;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

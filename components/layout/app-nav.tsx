@@ -70,7 +70,7 @@ export function AppNav() {
         <div className="relative flex h-16 items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/fixtures">
-              <Wordmark className="text-2xl" />
+              <Wordmark className="text-xl md:text-2xl" />
             </Link>
             <div className="hidden md:flex items-center gap-4">
               {navItems.map((item) => {
@@ -80,10 +80,8 @@ export function AppNav() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                      pathname === item.href
-                        ? "bg-white/20 text-white"
-                        : "text-white/80 hover:bg-white/10 hover:text-white",
+                      "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-primary-foreground transition-colors",
+                      pathname === item.href ? "bg-black/15" : "hover:bg-black/10",
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -97,16 +95,18 @@ export function AppNav() {
           <div className="flex items-center gap-3">
             <div
               data-testid="balance-pill"
-              className="flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-2.5 py-1 text-xs font-semibold tabular-nums max-md:absolute max-md:left-1/2 max-md:top-1/2 max-md:-translate-x-1/2 max-md:-translate-y-1/2 sm:px-3 sm:text-sm"
+              className="flex items-center gap-2 rounded-full border border-black/20 bg-black/15 px-2.5 py-1 text-xs font-semibold tabular-nums max-md:absolute max-md:left-1/2 max-md:top-1/2 max-md:-translate-x-1/2 max-md:-translate-y-1/2 sm:px-3 sm:text-sm"
             >
               <span>{isUserLoading ? "Countin'…" : formatMoney(me?.balance)}</span>
             </div>
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger
                 aria-label="Account menu"
-                className="flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium text-white/90 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-[3px] focus-visible:ring-white/50"
+                className="flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-black/10 focus-visible:ring-[3px] focus-visible:ring-primary-foreground/50"
               >
-                <span className="max-w-24 truncate">{me?.username ?? "…"}</span>
+                <span className="hidden max-w-24 truncate sm:block">
+                  {me?.username ?? "…"}
+                </span>
                 <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -134,7 +134,7 @@ export function AppNav() {
         </div>
       </div>
 
-      <div className="md:hidden border-t border-white/15">
+      <div className="md:hidden border-t border-black/15">
         <div className="container mx-auto px-4 py-2 flex items-center justify-around">
           {mobileNavItems.map((item) => {
             const Icon = item.icon;
@@ -143,8 +143,8 @@ export function AppNav() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center gap-1 px-3 py-2 rounded-md text-xs font-medium transition-colors",
-                  pathname === item.href ? "text-white" : "text-white/70",
+                  "flex flex-col items-center gap-1 px-3 py-2 rounded-md text-xs font-medium text-primary-foreground transition-colors",
+                  pathname === item.href && "bg-black/15",
                 )}
               >
                 <Icon className="h-5 w-5" />

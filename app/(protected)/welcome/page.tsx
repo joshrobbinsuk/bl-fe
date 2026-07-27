@@ -45,7 +45,9 @@ export default function WelcomePage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background to-accent/20">
       <div className="w-full max-w-md space-y-4">
         <div className="text-center space-y-2 mb-8">
-          <Wordmark className="block text-5xl text-primary" />
+          <h1>
+            <Wordmark className="text-5xl text-primary" />
+          </h1>
           <p className="text-muted-foreground">A betting app by Josh Robbins</p>
         </div>
 

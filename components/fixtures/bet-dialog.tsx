@@ -71,14 +71,16 @@ export function BetDialog({ fixture, open, onOpenChange }: BetDialogProps) {
       setChoice("HOME");
     } catch (error: any) {
       // The backend's own rejection text is shown as-is, bar the one case
-      // that's really a microcopy moment rather than a diagnostic.
-      const detail = error.data?.detail;
+      // that's really a microcopy moment rather than a diagnostic. A 422 sends
+      // `detail` as an array of field errors, which is no use to a punter.
+      const detail =
+        typeof error.data?.detail === "string" ? error.data.detail : null;
       toast({
         title: "No dice",
         description:
           detail === "Insufficient funds"
             ? "You're skint, son."
-            : detail || "Couldn't get that bet on.",
+            : detail ?? "Couldn't get that bet on.",
         variant: "destructive",
       });
     }

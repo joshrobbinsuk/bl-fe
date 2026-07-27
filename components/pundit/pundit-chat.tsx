@@ -28,12 +28,10 @@ function StagedStatus() {
   const [stage, setStage] = useState(0);
 
   useEffect(() => {
-    const id = setInterval(
-      () => setStage((s) => Math.min(s + 1, STAGED_STATUS.length - 1)),
-      STAGE_INTERVAL_MS,
-    );
-    return () => clearInterval(id);
-  }, []);
+    if (stage === STAGED_STATUS.length - 1) return;
+    const id = setTimeout(() => setStage(stage + 1), STAGE_INTERVAL_MS);
+    return () => clearTimeout(id);
+  }, [stage]);
 
   return (
     <span className="inline-flex items-center gap-2 text-muted-foreground">

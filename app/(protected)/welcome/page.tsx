@@ -13,23 +13,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  useGetMeQuery,
-  useSetShirtMutation,
-  useSetUsernameMutation,
-} from "@/lib/services/betting-api";
-import { defaultShirtFor, type Shirt } from "@/lib/shirts";
-import { ShirtPicker } from "@/components/profile/shirt-picker";
+import { Wordmark } from "@/components/layout/wordmark";
+import { useSetUsernameMutation } from "@/lib/services/betting-api";
 
 export default function WelcomePage() {
-  const { data: me } = useGetMeQuery();
   const [username, setUsername] = useState("");
-  const [shirt, setShirt] = useState<Shirt | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [setUsernameMutation, { isLoading }] = useSetUsernameMutation();
-  const [setShirtMutation] = useSetShirtMutation();
-
-  const selectedShirt = shirt ?? (me ? defaultShirtFor(me.id) : null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,20 +27,12 @@ export default function WelcomePage() {
 
     try {
       await setUsernameMutation({ username }).unwrap();
-      if (selectedShirt) {
-        try {
-          await setShirtMutation(selectedShirt).unwrap();
-        } catch {
-          // Shirt failure after a successful username set is fine — the user
-          // just keeps the fallback disc until they try again.
-        }
-      }
       // UsernameGate owns the redirect: the mutation patches getMe, so the gate
       // sees a non-null username and navigates to /fixtures on its own.
     } catch (err) {
       const status = (err as { status?: number }).status;
       if (status === 409) {
-        setError("That username is taken — try another.");
+        setError("Someone's nicked that one — try another.");
       } else if (status === 422) {
         setError("Use 3–20 letters, numbers or underscores.");
       } else {
@@ -63,16 +45,17 @@ export default function WelcomePage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background to-accent/20">
       <div className="w-full max-w-md space-y-4">
         <div className="text-center space-y-2 mb-8">
-          <h1 className="text-4xl font-bold tracking-tight">BrokeLads</h1>
+          <h1>
+            <Wordmark className="text-5xl text-primary" />
+          </h1>
           <p className="text-muted-foreground">A betting app by Josh Robbins</p>
         </div>
 
         <Card className="w-full">
           <CardHeader>
-            <CardTitle>Welcome to BrokeLads</CardTitle>
+            <CardTitle>Awright, son</CardTitle>
             <CardDescription>
-              Pick a username and a shirt. They&apos;re how you&apos;ll show up
-              on the leaderboard.
+              Pick a name. It&apos;s how you&apos;ll show up on the leaderboard.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -93,14 +76,8 @@ export default function WelcomePage() {
                 </p>
                 {error && <p className="text-sm text-destructive">{error}</p>}
               </div>
-              {selectedShirt && (
-                <div className="space-y-2">
-                  <Label>Your shirt</Label>
-                  <ShirtPicker value={selectedShirt} onChange={setShirt} />
-                </div>
-              )}
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Setting up..." : "Continue"}
+                {isLoading ? "Settin' you up…" : "Let's 'ave it"}
               </Button>
             </form>
           </CardContent>

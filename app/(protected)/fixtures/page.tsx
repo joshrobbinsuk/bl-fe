@@ -31,10 +31,10 @@ export default function FixturesPage() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight mb-2">
-                Upcoming Fixtures
+                Today&apos;s Card
               </h1>
               <p className="text-muted-foreground">
-                Place your bets on upcoming matches
+                Pick your winners, son.
               </p>
             </div>
             <div className="hidden md:block">
@@ -59,7 +59,9 @@ export default function FixturesPage() {
           {isLoading && (
             <div className="text-center py-12">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-              <p className="mt-4 text-muted-foreground">Loading fixtures...</p>
+              <p className="mt-4 text-muted-foreground">
+                Fetchin&apos; the fixtures…
+              </p>
             </div>
           )}
 
@@ -73,7 +75,7 @@ export default function FixturesPage() {
 
           {data?.fixtures && data.fixtures.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">No fixtures found</p>
+              <p className="text-muted-foreground">Nothing on today, son.</p>
             </div>
           )}
 

@@ -78,7 +78,7 @@ export function FixtureCard({ fixture }: FixtureCardProps) {
           )}
 
           <Button className="w-full mt-4" onClick={() => setShowBetDialog(true)} disabled={!hasOdds}>
-            Place Bet
+            Have a punt
           </Button>
         </CardContent>
       </Card>

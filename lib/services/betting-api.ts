@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { auth } from "@/lib/firebase";
-import type { Shirt } from "@/lib/shirts";
 
 export type FixtureResult = "HOME" | "AWAY" | "DRAW";
 export type BetOutcome = "UNDECIDED" | "WON" | "LOST" | "VOIDED";
@@ -14,7 +13,6 @@ export interface User {
   auth_uid: string;
   email: string;
   username: string | null; // null until set at the first-run gate
-  shirt: Shirt | null; // customisable kit, null until chosen
   balance: string; // weekly cup pot, Decimal as string
   cups_won: number;
   participation_streak: number; // consecutive settled cup weeks
@@ -82,7 +80,6 @@ export interface CupLeaderboardRow {
   rank: number;
   user_id: string;
   username: string | null;
-  shirt: Shirt | null;
   balance: string; // Decimal as string
   is_winner: boolean;
   cups_won: number; // lifetime cup wins
@@ -243,15 +240,6 @@ export const bettingApi = createApi({
         }
       },
     }),
-
-    setShirt: builder.mutation<{ shirt: Shirt }, Shirt>({
-      query: (body) => ({
-        url: "/client/me/shirt",
-        method: "PUT",
-        body,
-      }),
-      invalidatesTags: ["Cup", "User"],
-    }),
   }),
 });
 
@@ -265,5 +253,4 @@ export const {
   useGetCupsQuery,
   useCreateBetMutation,
   useSetUsernameMutation,
-  useSetShirtMutation,
 } = bettingApi;

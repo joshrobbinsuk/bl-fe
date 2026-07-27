@@ -42,7 +42,7 @@ export function SignupForm() {
 
     if (password.length < MIN_PASSWORD_LENGTH) {
       toast({
-        title: "Error",
+        title: "No dice",
         description: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
         variant: "destructive",
       })
@@ -51,7 +51,7 @@ export function SignupForm() {
 
     if (password !== confirmPassword) {
       toast({
-        title: "Error",
+        title: "No dice",
         description: "Passwords do not match",
         variant: "destructive",
       })
@@ -68,7 +68,7 @@ export function SignupForm() {
     } catch (error) {
       const code = error instanceof FirebaseError ? error.code : ""
       toast({
-        title: "Error",
+        title: "No dice",
         description: signupErrorMessage(code),
         variant: "destructive",
       })
@@ -81,7 +81,7 @@ export function SignupForm() {
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle>Sign Up</CardTitle>
-        <CardDescription>Create a new account to start betting</CardDescription>
+        <CardDescription>New round here? Get yourself an account.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

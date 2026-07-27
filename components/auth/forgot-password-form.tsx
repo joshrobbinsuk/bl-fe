@@ -48,7 +48,7 @@ export function ForgotPasswordForm() {
         return true;
       }
       toast({
-        title: "Error",
+        title: "No dice",
         description: "Failed to send reset email. Please try again.",
         variant: "destructive",
       });

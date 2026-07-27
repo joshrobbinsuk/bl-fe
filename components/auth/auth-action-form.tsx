@@ -79,7 +79,7 @@ function ResetPasswordForm({ oobCode }: { oobCode: string }) {
 
     if (password.length < MIN_PASSWORD_LENGTH) {
       toast({
-        title: "Error",
+        title: "No dice",
         description: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
         variant: "destructive",
       });
@@ -88,7 +88,7 @@ function ResetPasswordForm({ oobCode }: { oobCode: string }) {
 
     if (password !== confirmPassword) {
       toast({
-        title: "Error",
+        title: "No dice",
         description: "Passwords do not match",
         variant: "destructive",
       });
@@ -105,7 +105,7 @@ function ResetPasswordForm({ oobCode }: { oobCode: string }) {
         (error.code === "auth/expired-action-code" ||
           error.code === "auth/invalid-action-code");
       toast({
-        title: "Error",
+        title: "No dice",
         description: expired
           ? "This reset link has expired. Request a new one."
           : "Failed to reset password. Please try again.",

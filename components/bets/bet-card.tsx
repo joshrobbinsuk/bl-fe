@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { formatMoney } from "@/lib/money";
 import type { Bet } from "@/lib/services/betting-api";
 
 interface BetCardProps {
@@ -57,14 +58,14 @@ export function BetCard({ bet }: BetCardProps) {
             </div>
             <div className="space-y-1 text-right">
               <div className="text-muted-foreground">Stake</div>
-              <div className="font-medium">
-                ${Number.parseFloat(bet.stake).toFixed(2)}
+              <div className="font-medium tabular-nums">
+                {formatMoney(bet.stake)}
               </div>
             </div>
             <div className="space-y-1 text-right">
               <div className="text-muted-foreground">Returns</div>
-              <div className="font-medium">
-                ${Number.parseFloat(bet.returns).toFixed(2)}
+              <div className="font-medium tabular-nums">
+                {formatMoney(bet.returns)}
               </div>
             </div>
           </div>

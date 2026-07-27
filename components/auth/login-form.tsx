@@ -43,14 +43,13 @@ export function LoginForm() {
     try {
       await signIn(email, password)
       toast({
-        title: "Success",
-        description: "Logged in successfully",
+        title: "You're in, lad.",
       })
       router.push("/fixtures")
     } catch (error) {
       const code = error instanceof FirebaseError ? error.code : ""
       toast({
-        title: "Error",
+        title: "No dice",
         description: loginErrorMessage(code),
         variant: "destructive",
       })
@@ -63,7 +62,7 @@ export function LoginForm() {
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle>Login</CardTitle>
-        <CardDescription>Enter your credentials to access your account</CardDescription>
+        <CardDescription>Right then, in you come.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

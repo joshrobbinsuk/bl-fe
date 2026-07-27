@@ -20,6 +20,7 @@ import {
   useCreateBetMutation,
 } from "@/lib/services/betting-api";
 import { useToast } from "@/hooks/use-toast";
+import { formatMoney } from "@/lib/money";
 
 interface BetDialogProps {
   fixture: Fixture;
@@ -61,17 +62,23 @@ export function BetDialog({ fixture, open, onOpenChange }: BetDialogProps) {
       }).unwrap();
 
       toast({
-        title: "Bet Placed",
-        description: "Your bet has been placed successfully",
+        title: "Bet's on, lad.",
+        description: "Good luck, son.",
       });
 
       onOpenChange(false);
       setStake("");
       setChoice("HOME");
     } catch (error: any) {
+      // The backend's own rejection text is shown as-is, bar the one case
+      // that's really a microcopy moment rather than a diagnostic.
+      const detail = error.data?.detail;
       toast({
-        title: "Error",
-        description: error.data?.detail || "Failed to place bet",
+        title: "No dice",
+        description:
+          detail === "Insufficient funds"
+            ? "You're skint, son."
+            : detail || "Couldn't get that bet on.",
         variant: "destructive",
       });
     }
@@ -81,7 +88,7 @@ export function BetDialog({ fixture, open, onOpenChange }: BetDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Place Your Bet</DialogTitle>
+          <DialogTitle>Get your bet on</DialogTitle>
           <DialogDescription>
             {fixture.home_team} vs {fixture.away_team}
           </DialogDescription>
@@ -89,7 +96,7 @@ export function BetDialog({ fixture, open, onOpenChange }: BetDialogProps) {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-3">
-            <Label>Choose Outcome</Label>
+            <Label>Who&apos;s winning?</Label>
             <RadioGroup
               value={choice}
               onValueChange={(val) => setChoice(val as FixtureResult)}
@@ -139,7 +146,7 @@ export function BetDialog({ fixture, open, onOpenChange }: BetDialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="stake">Stake Amount</Label>
+            <Label htmlFor="stake">Your stake</Label>
             <Input
               id="stake"
               type="number"
@@ -155,16 +162,16 @@ export function BetDialog({ fixture, open, onOpenChange }: BetDialogProps) {
           {stake && Number.parseFloat(stake) > 0 && (
             <div className="p-4 bg-accent rounded-lg space-y-1">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Potential Return</span>
-                <span className="font-semibold">
-                  ${calculatePotentialReturn()}
+                <span className="text-muted-foreground">You could win</span>
+                <span className="font-semibold tabular-nums">
+                  {formatMoney(calculatePotentialReturn())}
                 </span>
               </div>
             </div>
           )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Placing Bet..." : "Confirm Bet"}
+            {isLoading ? "Gettin' it on…" : "Get it on"}
           </Button>
         </form>
       </DialogContent>

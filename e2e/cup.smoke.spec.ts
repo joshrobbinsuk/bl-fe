@@ -16,15 +16,15 @@ test.describe("weekly cup", () => {
     // Place a bet on the first available fixture. This must come first: on a
     // fresh stack the week's cup doesn't exist until the first bet creates it.
     await page.goto("/fixtures");
-    const placeBet = page.getByRole("button", { name: "Place Bet" }).first();
+    const placeBet = page.getByRole("button", { name: "Have a punt" }).first();
     await expect(placeBet).toBeVisible();
     await placeBet.click();
 
     await expect(
-      page.getByRole("heading", { name: "Place Your Bet" }),
+      page.getByRole("heading", { name: "Get your bet on" }),
     ).toBeVisible();
     await page.fill("#stake", "10");
-    await page.getByRole("button", { name: "Confirm Bet" }).click();
+    await page.getByRole("button", { name: "Get it on" }).click();
 
     // Toast confirms placement, then the nav pot should reflect the stake.
     // Scope to the toast viewport region — Radix also mounts a visually-hidden
@@ -33,7 +33,7 @@ test.describe("weekly cup", () => {
     await expect(
       page
         .getByRole("region", { name: /notifications/i })
-        .getByText("Bet Placed"),
+        .getByText("Bet's on, lad."),
     ).toBeVisible();
     await expect(async () => {
       const potAfter = (await potPill.innerText()).trim();

@@ -42,7 +42,7 @@ export default function CupPage() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight mb-2">Weekly Cup</h1>
             <p className="text-muted-foreground">
-              Biggest pot at the end of the week wins. Refreshes to $1000 on Monday.
+              Biggest pot at the end of the week wins. Back to £1000 on Monday.
             </p>
           </div>
 
@@ -55,7 +55,9 @@ export default function CupPage() {
           {isLoading && (
             <div className="text-center py-12">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-              <p className="mt-4 text-muted-foreground">Loading cup...</p>
+              <p className="mt-4 text-muted-foreground">
+                Countin&apos; the pots…
+              </p>
             </div>
           )}
 
@@ -70,7 +72,7 @@ export default function CupPage() {
           {!isLoading && !error && !cup && (
             <div className="text-center py-12">
               <p className="text-muted-foreground">
-                No cup is running this week yet.
+                No cup on yet. Get a bet on to start it, son.
               </p>
             </div>
           )}

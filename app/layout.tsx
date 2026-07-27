@@ -10,8 +10,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BrokeLads - Sports Betting Platform",
-  description: "Place bets on your favorite sports fixtures",
+  title: "BrokeLads — Get it on",
+  description: "Get your bets on the week's fixtures, son.",
   generator: "v0.app",
   icons: {
     icon: "/icon.svg",

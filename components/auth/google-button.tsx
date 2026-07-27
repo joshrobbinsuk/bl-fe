@@ -49,7 +49,7 @@ export function GoogleSignInButton() {
         code !== "auth/cancelled-popup-request"
       ) {
         toast({
-          title: "Error",
+          title: "No dice",
           description: "Google sign-in failed. Please try again.",
           variant: "destructive",
         });

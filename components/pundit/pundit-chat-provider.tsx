@@ -72,8 +72,8 @@ export function PunditChatProvider({
 
       if (fixtureIds.length === 0) {
         toast({
-          title: "No fixtures",
-          description: "There are no visible fixtures to ask about.",
+          title: "Nothing to talk about",
+          description: "No fixtures on screen, son.",
           variant: "destructive",
         });
         return;

@@ -41,7 +41,7 @@ export default function MyBetsPage() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight mb-2">My Bets</h1>
             <p className="text-muted-foreground">
-              Track your betting history and results
+              Every punt you&apos;ve had, win or lose.
             </p>
           </div>
 
@@ -70,7 +70,9 @@ export default function MyBetsPage() {
           {isLoading && (
             <div className="text-center py-12">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-              <p className="mt-4 text-muted-foreground">Loading bets...</p>
+              <p className="mt-4 text-muted-foreground">
+                Diggin&apos; out your slips…
+              </p>
             </div>
           )}
 
@@ -84,7 +86,9 @@ export default function MyBetsPage() {
 
           {data?.bets && data.bets.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">No bets found</p>
+              <p className="text-muted-foreground">
+                No bets yet. Fancy your chances?
+              </p>
             </div>
           )}
 

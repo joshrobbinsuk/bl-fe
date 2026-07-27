@@ -13,6 +13,36 @@ interface PunditChatProps {
   fixtureIds: string[];
 }
 
+const STAGED_STATUS = [
+  "Checking the fixtures…",
+  "Having a think…",
+  "Nearly there, son…",
+];
+const STAGE_INTERVAL_MS = 1800;
+
+/**
+ * Mounted only while a reply is pending with nothing streamed yet, so the first
+ * delta unmounts it and the stage resets for the next question.
+ */
+function StagedStatus() {
+  const [stage, setStage] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(
+      () => setStage((s) => Math.min(s + 1, STAGED_STATUS.length - 1)),
+      STAGE_INTERVAL_MS,
+    );
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <span className="inline-flex items-center gap-2 text-muted-foreground">
+      <Spinner className="size-3" />
+      {STAGED_STATUS[stage]}
+    </span>
+  );
+}
+
 function Bubble({
   role,
   children,
@@ -64,12 +94,7 @@ export function PunditChat({ fixtureIds }: PunditChatProps) {
 
         {streaming && (
           <Bubble role="assistant">
-            {streamingContent || (
-              <span className="inline-flex items-center gap-2 text-muted-foreground">
-                <Spinner className="size-3" />
-                Thinking…
-              </span>
-            )}
+            {streamingContent || <StagedStatus />}
           </Bubble>
         )}
       </div>
@@ -85,7 +110,7 @@ export function PunditChat({ fixtureIds }: PunditChatProps) {
           <Input
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="Ask the pundit…"
+            placeholder="Go on then, ask us…"
             disabled={streaming}
             maxLength={2000}
           />

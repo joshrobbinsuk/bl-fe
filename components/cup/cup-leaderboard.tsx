@@ -4,7 +4,6 @@ import { Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { formatMoney } from "@/lib/money";
-import { UserShirt } from "@/components/profile/user-shirt";
 import { StreakBadges } from "@/components/cup/streak-badges";
 import type { CupLeaderboardRow } from "@/lib/services/betting-api";
 
@@ -17,7 +16,9 @@ export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
   if (rows.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">No entries yet this week</p>
+        <p className="text-muted-foreground">
+          Nobody&apos;s had a punt yet this week.
+        </p>
       </div>
     );
   }
@@ -37,15 +38,16 @@ export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
                 )}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground tabular-nums">
+                  <span
+                    className={cn(
+                      "flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold tabular-nums",
+                      row.rank === 1
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground",
+                    )}
+                  >
                     {row.rank}
                   </span>
-                  <UserShirt
-                    shirt={row.shirt}
-                    userId={row.user_id}
-                    username={row.username}
-                    size="sm"
-                  />
                   <span className="truncate font-medium">
                     {row.username ?? "—"}
                     {isSelf && (

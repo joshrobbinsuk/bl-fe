@@ -11,10 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { UserShirt } from "@/components/profile/user-shirt";
+import { Wordmark } from "@/components/layout/wordmark";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useGetMeQuery } from "@/lib/services/betting-api";
+import { formatMoney } from "@/lib/money";
 
 import { cn } from "@/lib/utils";
 
@@ -45,16 +46,6 @@ export function AppNav() {
   const router = useRouter();
   const { data: me, isLoading: isUserLoading } = useGetMeQuery();
 
-  const balanceNumber =
-    me?.balance !== undefined ? Number.parseFloat(me.balance) : null;
-  const balanceLabel =
-    balanceNumber !== null && !Number.isNaN(balanceNumber)
-      ? new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(balanceNumber)
-      : "Balance --";
-
   const handleSignOut = async () => {
     await signOut();
     router.push("/login");
@@ -74,12 +65,12 @@ export function AppNav() {
   ];
 
   return (
-    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+    <nav className="bg-primary text-primary-foreground sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="relative flex h-16 items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link href="/fixtures" className="font-bold text-xl">
-              BrokeLads
+            <Link href="/fixtures">
+              <Wordmark className="text-2xl" />
             </Link>
             <div className="hidden md:flex items-center gap-4">
               {navItems.map((item) => {
@@ -91,8 +82,8 @@ export function AppNav() {
                     className={cn(
                       "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                       pathname === item.href
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                        ? "bg-white/20 text-white"
+                        : "text-white/80 hover:bg-white/10 hover:text-white",
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -106,23 +97,17 @@ export function AppNav() {
           <div className="flex items-center gap-3">
             <div
               data-testid="balance-pill"
-              className="flex items-center gap-2 rounded-full border bg-muted/40 px-2.5 py-1 text-xs font-medium text-foreground max-md:absolute max-md:left-1/2 max-md:top-1/2 max-md:-translate-x-1/2 max-md:-translate-y-1/2 sm:px-3 sm:text-sm"
+              className="flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-2.5 py-1 text-xs font-semibold tabular-nums max-md:absolute max-md:left-1/2 max-md:top-1/2 max-md:-translate-x-1/2 max-md:-translate-y-1/2 sm:px-3 sm:text-sm"
             >
-              <span className={isUserLoading ? "text-muted-foreground" : ""}>
-                {isUserLoading ? "Loading..." : balanceLabel}
-              </span>
+              <span>{isUserLoading ? "Countin'…" : formatMoney(me?.balance)}</span>
             </div>
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger
                 aria-label="Account menu"
-                className="flex items-center gap-1 rounded-full outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                className="flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium text-white/90 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-[3px] focus-visible:ring-white/50"
               >
-                <UserShirt
-                  shirt={me?.shirt ?? null}
-                  userId={me?.id ?? ""}
-                  username={me?.username ?? null}
-                />
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                <span className="max-w-24 truncate">{me?.username ?? "…"}</span>
+                <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel className="font-normal">
@@ -149,7 +134,7 @@ export function AppNav() {
         </div>
       </div>
 
-      <div className="md:hidden border-t">
+      <div className="md:hidden border-t border-white/15">
         <div className="container mx-auto px-4 py-2 flex items-center justify-around">
           {mobileNavItems.map((item) => {
             const Icon = item.icon;
@@ -159,9 +144,7 @@ export function AppNav() {
                 href={item.href}
                 className={cn(
                   "flex flex-col items-center gap-1 px-3 py-2 rounded-md text-xs font-medium transition-colors",
-                  pathname === item.href
-                    ? "text-primary"
-                    : "text-muted-foreground",
+                  pathname === item.href ? "text-white" : "text-white/70",
                 )}
               >
                 <Icon className="h-5 w-5" />

@@ -18,13 +18,15 @@ const STAGED_STATUS = [
   "Having a think…",
   "Nearly there, son…",
 ];
+const SEARCH_STATUS = "Scouring the web, son…";
 const STAGE_INTERVAL_MS = 1800;
 
 /**
  * Mounted only while a reply is pending with nothing streamed yet, so the first
- * delta unmounts it and the stage resets for the next question.
+ * delta unmounts it and the stage resets for the next question. A live web
+ * search takes over the line; the timed stages are the fallback without one.
  */
-function StagedStatus() {
+function StagedStatus({ searching }: { searching: boolean }) {
   const [stage, setStage] = useState(0);
 
   useEffect(() => {
@@ -36,7 +38,7 @@ function StagedStatus() {
   return (
     <span className="inline-flex items-center gap-2 text-muted-foreground">
       <Spinner className="size-3" />
-      {STAGED_STATUS[stage]}
+      {searching ? SEARCH_STATUS : STAGED_STATUS[stage]}
     </span>
   );
 }
@@ -67,7 +69,8 @@ function Bubble({
 }
 
 export function PunditChat({ fixtureIds }: PunditChatProps) {
-  const { messages, streaming, streamingContent, send } = usePunditChat();
+  const { messages, streaming, searching, streamingContent, send } =
+    usePunditChat();
   const [draft, setDraft] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -92,7 +95,7 @@ export function PunditChat({ fixtureIds }: PunditChatProps) {
 
         {streaming && (
           <Bubble role="assistant">
-            {streamingContent || <StagedStatus />}
+            {streamingContent || <StagedStatus searching={searching} />}
           </Bubble>
         )}
       </div>

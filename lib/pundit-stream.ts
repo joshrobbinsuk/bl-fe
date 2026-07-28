@@ -1,4 +1,5 @@
 import { auth } from "@/lib/firebase";
+import { parseApiError } from "@/lib/services/api-error";
 
 export interface PunditTurn {
   role: "user" | "assistant";
@@ -70,15 +71,18 @@ export async function streamPunditResponse(
   );
 
   if (!response.ok || !response.body) {
-    let detail = `Request failed (${response.status})`;
+    let message: string | null = null;
     try {
-      const body = await response.json();
-      if (typeof body?.detail === "string") detail = body.detail;
-      else if (Array.isArray(body?.detail)) detail = "Invalid request";
+      message = parseApiError(await response.json()).message;
     } catch {
-      // non-JSON error body; keep the status-based message
+      // non-JSON error body; fall through to the status-based message
     }
-    throw new PunditStreamError(detail);
+    throw new PunditStreamError(
+      message ??
+        (response.status === 422
+          ? "Invalid request"
+          : `Request failed (${response.status})`),
+    );
   }
 
   const reader = response.body.getReader();

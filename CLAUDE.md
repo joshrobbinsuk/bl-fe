@@ -20,6 +20,8 @@ Each `Fixture` carries a nested `league: { id, display_name, logo } | null` (`le
 
 `prepareHeaders` attaches `Authorization: Bearer <idToken>` from `auth.currentUser?.getIdToken()` (the Firebase SDK auto-refreshes). Money fields (balance/stake/returns) are **strings** end-to-end — backend sends `Decimal` as string; don't coerce to `number` for display/math without care.
 
+Backend rejections go through `parseApiError` (`lib/services/api-error.ts`), which normalises `detail` to `{ code, message }` and tolerates both wire shapes (bare prose string, or the `{code, message}` object). Branch on `code` (e.g. `INSUFFICIENT_FUNDS`), never on the prose; show `message` otherwise. Never read `error.data.detail` directly.
+
 State: RTK Query cache only — no Redux feature slices, no Context/Zustand. Auth state comes from `useAuth()`.
 
 ## Commands

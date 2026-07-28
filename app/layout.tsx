@@ -31,6 +31,9 @@ export default function RootLayout({
           {children}
           <Toaster />
         </ReduxProvider>
+        <footer className="text-muted-foreground px-4 py-3 text-center text-xs">
+          A portfolio demo. Play money only. No affiliation with Ladbrokes.
+        </footer>
         <Analytics />
       </body>
     </html>

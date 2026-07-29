@@ -114,7 +114,7 @@ export function PunditChat({ fixtureIds }: PunditChatProps) {
           <Input
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="Go on then, ask us…"
+            placeholder="Ask away, geez…"
             disabled={streaming}
             maxLength={2000}
           />

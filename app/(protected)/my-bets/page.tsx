@@ -53,7 +53,7 @@ export default function MyBetsPage() {
             />
             <SearchInput
               className="w-full sm:w-64"
-              placeholder="Search teams or venues..."
+              placeholder="Search teams..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />

@@ -5,6 +5,7 @@ import type React from "react"
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/hooks/use-auth"
+import { AuthLoading } from "@/components/auth/auth-loading"
 
 export function RouteGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -17,7 +18,7 @@ export function RouteGuard({ children }: { children: React.ReactNode }) {
   }, [loading, user, router])
 
   if (loading || !user) {
-    return null
+    return <AuthLoading />
   }
 
   return <>{children}</>

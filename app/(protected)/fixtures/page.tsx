@@ -31,7 +31,7 @@ export default function FixturesPage() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight mb-2">
-                Today&apos;s Card
+                Fancy a Flutter?
               </h1>
               <p className="text-muted-foreground">
                 Pick your winners, son.
@@ -45,7 +45,7 @@ export default function FixturesPage() {
           <div className="flex flex-col sm:flex-row gap-3">
             <SearchInput
               className="flex-1"
-              placeholder="Search teams or venues..."
+              placeholder="Search teams..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />

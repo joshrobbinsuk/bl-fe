@@ -41,7 +41,7 @@ export default function MyBetsPage() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight mb-2">My Bets</h1>
             <p className="text-muted-foreground">
-              Every punt you&apos;ve had, win or lose.
+              Your punts — results can turn up 20 mins after full-time.
             </p>
           </div>
 

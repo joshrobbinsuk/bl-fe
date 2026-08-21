@@ -72,9 +72,12 @@ export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
                     profitStreak={row.profit_streak}
                   />
                 </div>
-                <span className="font-semibold tabular-nums">
-                  {formatMoney(row.balance)}
-                </span>
+                <div className="flex shrink-0 flex-col items-end tabular-nums">
+                  <span className="font-semibold">{formatMoney(row.balance)}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {formatMoney(row.potential)} potential
+                  </span>
+                </div>
               </li>
             );
           })}

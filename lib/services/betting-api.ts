@@ -81,6 +81,7 @@ export interface CupLeaderboardRow {
   user_id: string;
   username: string | null;
   balance: string; // Decimal as string
+  potential: string; // balance + returns of open bets — best-case week end, Decimal as string
   is_winner: boolean;
   cups_won: number; // lifetime cup wins
   participation_streak: number; // consecutive settled cup weeks

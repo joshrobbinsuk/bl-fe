@@ -41,7 +41,7 @@ export default function MyBetsPage() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight mb-2">My Bets</h1>
             <p className="text-muted-foreground">
-              Your punts — results can turn up 20 mins after full-time.
+              Your punts — settled within a minute of the final whistle.
             </p>
           </div>
 

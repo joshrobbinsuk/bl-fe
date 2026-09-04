@@ -9,16 +9,19 @@ import { BetCard } from "@/components/bets/bet-card";
 import { AppNav } from "@/components/layout/app-nav";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SearchInput } from "@/components/ui/search-input";
-import { WeekSelector } from "@/components/cup/week-selector";
+import {
+  WeekSelector,
+  usePreviousCup,
+  type WeekScope,
+} from "@/components/cup/week-selector";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 
 export default function MyBetsPage() {
   const [filter, setFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCupId, setSelectedCupId] = useState<string | undefined>(
-    undefined,
-  );
+  const [scope, setScope] = useState<WeekScope>("current");
   const currentCupId = useGetCupCurrentQuery().data?.cup?.id;
+  const previousCup = usePreviousCup(currentCupId);
   const debouncedSearch = useDebouncedValue(searchTerm.trim(), 300);
   const outcome =
     filter === "all"
@@ -29,7 +32,7 @@ export default function MyBetsPage() {
   const { data, isLoading, error } = useGetUserBetsQuery({
     outcome,
     search: debouncedSearch || undefined,
-    cup_id: selectedCupId,
+    cup_id: scope === "previous" ? previousCup?.id : undefined,
   });
 
   return (
@@ -47,8 +50,8 @@ export default function MyBetsPage() {
 
           <div className="flex flex-col gap-3">
             <WeekSelector
-              value={selectedCupId}
-              onChange={setSelectedCupId}
+              value={scope}
+              onChange={setScope}
               currentCupId={currentCupId}
             />
             <SearchInput
@@ -87,7 +90,9 @@ export default function MyBetsPage() {
           {data?.bets && data.bets.length === 0 && (
             <div className="text-center py-12">
               <p className="text-muted-foreground">
-                No bets yet. Fancy your chances?
+                {scope === "previous"
+                  ? "No punts that week."
+                  : "No bets yet. Fancy your chances?"}
               </p>
             </div>
           )}

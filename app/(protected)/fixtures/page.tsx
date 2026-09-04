@@ -42,19 +42,18 @@ export default function FixturesPage() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col gap-3">
+            <LeagueFilter
+              value={selectedLeagueId}
+              onChange={setSelectedLeagueId}
+            />
             <SearchInput
-              className="flex-1"
+              className="w-full"
               placeholder="Search teams..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-
-          <LeagueFilter
-            value={selectedLeagueId}
-            onChange={setSelectedLeagueId}
-          />
 
           {isLoading && (
             <div className="text-center py-12">

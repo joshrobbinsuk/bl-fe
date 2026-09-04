@@ -98,13 +98,10 @@ export default function CupPage() {
 
           {scope === "all" && allTimeQuery.data && (
             <div className="space-y-6">
-              <section className="space-y-3">
-                <h2 className="text-lg font-semibold">Biggest pots</h2>
-                <BestWeeks
-                  entries={allTimeQuery.data.best_weeks}
-                  currentUserId={me?.id}
-                />
-              </section>
+              <BestWeeks
+                entries={allTimeQuery.data.best_weeks}
+                currentUserId={me?.id}
+              />
               <ProfitStreakRecord
                 record={allTimeQuery.data.profit_streak_record}
                 currentUserId={me?.id}

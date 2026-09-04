@@ -20,7 +20,7 @@ export function ProfitStreakRecord({
         <div className="text-xs text-muted-foreground">Longest profit streak</div>
         {record === null ? (
           <p className="mt-1 text-sm text-muted-foreground">
-            Nobody&apos;s strung two winning weeks together yet.
+            Nobody&apos;s strung two profitable weeks together yet. Mugs.
           </p>
         ) : (
           <>

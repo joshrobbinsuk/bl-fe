@@ -1,57 +1,62 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useGetCupsQuery } from "@/lib/services/betting-api";
+import { useGetCupsQuery, type Cup } from "@/lib/services/betting-api";
+import { formatWeekStart } from "@/lib/weeks";
 
-interface WeekSelectorProps {
-  /** undefined means the current week */
-  value: string | undefined;
-  /**
-   * Id of the cup that is the current week, if one is open. It's covered by the
-   * "This week" pill and excluded from the past-week list. When omitted (no
-   * open cup, or a caller that doesn't know it), every cup is a selectable past
-   * week.
-   */
-  currentCupId?: string;
-  onChange: (cupId: string | undefined) => void;
+export type WeekScope = "current" | "previous" | "all";
+
+/**
+ * The most recent cup that isn't the current week — what the "Week of …" chip
+ * selects. A missed week has no cup, so it's simply skipped over.
+ */
+export function usePreviousCup(
+  currentCupId: string | undefined,
+): Cup | undefined {
+  const { data } = useGetCupsQuery();
+  return data?.cups.find((cup) => cup.id !== currentCupId);
 }
 
-function weekLabel(weekStart: string): string {
-  return new Date(weekStart).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
+interface WeekSelectorProps {
+  value: WeekScope;
+  onChange: (scope: WeekScope) => void;
+  /** Id of the open cup, so it isn't offered as the previous week. */
+  currentCupId: string | undefined;
+  /** Label for a third chip (e.g. "All time"); omitted means no third chip. */
+  allLabel?: string;
 }
 
 export function WeekSelector({
   value,
-  currentCupId,
   onChange,
+  currentCupId,
+  allLabel,
 }: WeekSelectorProps) {
-  const { data } = useGetCupsQuery();
-  const cups = data?.cups ?? [];
+  const previousCup = usePreviousCup(currentCupId);
 
-  if (cups.length === 0) return null;
+  const chips: { scope: WeekScope; label: string }[] = [
+    { scope: "current", label: "This week" },
+  ];
+  if (previousCup) {
+    chips.push({
+      scope: "previous",
+      label: `Week of ${formatWeekStart(previousCup.week_start)}`,
+    });
+  }
+  if (allLabel) chips.push({ scope: "all", label: allLabel });
 
-  const pastCups = cups.filter((cup) => cup.id !== currentCupId);
+  if (chips.length === 1) return null;
 
   return (
     <div className="flex flex-wrap gap-2">
-      <Button
-        size="sm"
-        variant={value === undefined ? "default" : "outline"}
-        onClick={() => onChange(undefined)}
-      >
-        This week
-      </Button>
-      {pastCups.map((cup) => (
+      {chips.map((chip) => (
         <Button
-          key={cup.id}
+          key={chip.scope}
           size="sm"
-          variant={value === cup.id ? "default" : "outline"}
-          onClick={() => onChange(cup.id)}
+          variant={value === chip.scope ? "default" : "outline"}
+          onClick={() => onChange(chip.scope)}
         >
-          Week of {weekLabel(cup.week_start)}
+          {chip.label}
         </Button>
       ))}
     </div>

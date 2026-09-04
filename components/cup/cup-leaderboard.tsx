@@ -66,7 +66,6 @@ export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
                       {row.cups_won}
                     </span>
                   )}
-                  {row.is_winner && <span aria-label="Winner">🏆</span>}
                   <StreakBadges
                     participationStreak={row.participation_streak}
                     profitStreak={row.profit_streak}

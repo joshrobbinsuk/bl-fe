@@ -15,16 +15,27 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { formatMoney } from "@/lib/money";
+import { formatWeekStart } from "@/lib/weeks";
 import {
   useGetMeQuery,
   useSetUsernameMutation,
 } from "@/lib/services/betting-api";
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+}) {
   return (
     <div className="rounded-lg border bg-card px-3 py-2">
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="text-lg font-semibold tabular-nums">{value}</div>
+      {hint && <div className="text-xs text-muted-foreground">{hint}</div>}
     </div>
   );
 }
@@ -91,8 +102,17 @@ export default function ProfilePage() {
               {me.email} · lad since {ladSince}
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid grid-cols-3 gap-3">
+          <CardContent className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="🏆 Cups won" value={String(me.cups_won)} />
+            <Stat
+              label="🥇 Best week"
+              value={me.best_week ? formatMoney(me.best_week.balance) : "—"}
+              hint={
+                me.best_week
+                  ? `Week of ${formatWeekStart(me.best_week.week_start)}`
+                  : undefined
+              }
+            />
             <Stat
               label="🔥 Active streak"
               value={String(me.participation_streak)}

@@ -17,6 +17,7 @@ export interface User {
   cups_won: number;
   participation_streak: number; // consecutive settled cup weeks
   profit_streak: number; // consecutive settled weeks ending in profit
+  best_week: BestWeek | null; // biggest settled-week pot; null before the first settled cup
   created_at: string;
   updated_at: string;
 }
@@ -102,6 +103,37 @@ export interface CupResponse {
 
 export interface CupsResponse {
   cups: Cup[];
+}
+
+export interface BestWeek {
+  balance: string; // Decimal as string
+  week_start: string; // ISO datetime
+}
+
+// One settled-cup entry; the all-time list is raw, so a user can appear more than once.
+export interface BestWeekEntry extends BestWeek {
+  rank: number;
+  user_id: string;
+  username: string | null;
+  cup_id: string;
+}
+
+export interface ProfitStreakHolder {
+  user_id: string;
+  username: string | null;
+  ended_week_start: string; // ISO datetime of the run's last week
+  is_current: boolean; // the record run is the one they're still on
+}
+
+// The longest run of consecutive profitable settled weeks and everyone on it.
+export interface ProfitStreakRecord {
+  length: number;
+  holders: ProfitStreakHolder[];
+}
+
+export interface AllTimeResponse {
+  best_weeks: BestWeekEntry[];
+  profit_streak_record: ProfitStreakRecord | null; // null until someone has two on the bounce
 }
 
 export interface FixturesResponse {
@@ -209,6 +241,11 @@ export const bettingApi = createApi({
       providesTags: ["Cup"],
     }),
 
+    getAllTime: builder.query<AllTimeResponse, void>({
+      query: () => "/client/cups/all-time",
+      providesTags: ["Cup"],
+    }),
+
     createBet: builder.mutation<CreateBetResponse, CreateBetRequest>({
       query: (bet) => ({
         url: "/client/bet",
@@ -252,6 +289,7 @@ export const {
   useGetCupCurrentQuery,
   useGetCupQuery,
   useGetCupsQuery,
+  useGetAllTimeQuery,
   useCreateBetMutation,
   useSetUsernameMutation,
 } = bettingApi;

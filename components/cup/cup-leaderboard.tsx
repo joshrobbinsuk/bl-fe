@@ -64,7 +64,7 @@ export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
                 <div className="flex shrink-0 flex-col items-end tabular-nums">
                   <span className="font-semibold">{formatMoney(row.balance)}</span>
                   <span className="text-xs text-muted-foreground">
-                    {formatMoney(row.potential)} potential
+                    {formatMoney(row.potential)} max
                   </span>
                 </div>
               </li>

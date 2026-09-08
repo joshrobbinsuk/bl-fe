@@ -15,15 +15,16 @@ function Badge({ icon, count, label }: BadgeProps) {
 
   return (
     <span
-      className="relative inline-flex size-[14px] shrink-0 items-center justify-center"
+      className="relative inline-flex size-4 shrink-0 items-center justify-center"
       title={label}
     >
-      <span aria-hidden className="text-[12px] leading-none">
+      <span aria-hidden className="text-[13px] leading-none">
         {icon}
       </span>
+      {/* Ringed so the disc reads as its own thing against the emoji behind it. */}
       <span
         aria-hidden
-        className="absolute -bottom-0.5 -right-0.5 text-[9px] font-semibold leading-none tabular-nums text-foreground/70 [text-shadow:0_0_2px_var(--background),0_0_2px_var(--background)]"
+        className="absolute -bottom-1 -right-1 flex size-[11px] items-center justify-center rounded-full bg-muted/90 text-[8px] font-semibold leading-none tabular-nums text-foreground ring-1 ring-background"
       >
         {count}
       </span>
@@ -39,8 +40,11 @@ export function PlayerBadges({
 }: PlayerBadgesProps) {
   if (cupsWon <= 0 && profitStreak <= 0 && participationStreak <= 0) return null;
 
+  // Tight where the row is fighting for width, roomier once there is space to
+  // spare. Gaps can't flex — flex-shrink sizes items, not the space between
+  // them — so this is a breakpoint rather than something automatic.
   return (
-    <span className="flex shrink-0 items-center gap-[3px]">
+    <span className="flex shrink-0 items-center gap-1 sm:gap-2">
       <Badge
         icon="🏆"
         count={cupsWon}

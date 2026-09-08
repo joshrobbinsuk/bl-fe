@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { formatMoney } from "@/lib/money";
-import { StreakBadges } from "@/components/cup/streak-badges";
+import { PlayerBadges } from "@/components/cup/player-badges";
 import type { CupLeaderboardRow } from "@/lib/services/betting-api";
 
 interface CupLeaderboardProps {
@@ -55,20 +55,10 @@ export function CupLeaderboard({ rows, currentUserId }: CupLeaderboardProps) {
                       </span>
                     )}
                   </span>
-                  {row.cups_won > 0 && (
-                    <span
-                      className="flex shrink-0 items-center gap-0.5 text-xs text-muted-foreground"
-                      title={`${row.cups_won} cup ${
-                        row.cups_won === 1 ? "win" : "wins"
-                      }`}
-                    >
-                      <span aria-hidden>🏆</span>
-                      {row.cups_won}
-                    </span>
-                  )}
-                  <StreakBadges
-                    participationStreak={row.participation_streak}
+                  <PlayerBadges
+                    cupsWon={row.cups_won}
                     profitStreak={row.profit_streak}
+                    participationStreak={row.participation_streak}
                   />
                 </div>
                 <div className="flex shrink-0 flex-col items-end tabular-nums">
